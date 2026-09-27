@@ -17,13 +17,13 @@ const LIFECYCLE_STAGES = [
 ];
 
 export default function ProjectDetails() {
-  const { projectId } = useParams();
+  const { id } = useParams();
   
   // Find project
-  const project = projects.find((p) => p.id === projectId);
+  const project = projects.find((p) => p.id === id);
   
   // Related parcels
-  const projectParcels = parcels.filter((p) => p.projectId === projectId);
+  const projectParcels = parcels.filter((p) => p.projectId === id);
 
   if (!project) {
     return (

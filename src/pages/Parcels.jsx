@@ -201,7 +201,7 @@ const Parcels = () => {
                             <td className="px-6 py-4">{parcel.area}</td>
                             <td className="px-6 py-4">{parcel.landType}</td>
                             <td className="px-6 py-4">
-                              <StatusBadge status={parcel.verification || 'Pending'} />
+                              <StatusBadge status={parcel.verificationStatus || (parcel.status === 'Acquired' ? 'Verified' : 'Pending')} />
                             </td>
                             <td className="px-6 py-4">
                               <StatusBadge status={parcel.status} />
@@ -356,7 +356,7 @@ const Parcels = () => {
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-1">Verification</p>
-                      <StatusBadge status={selectedParcel.verification || 'Pending'} />
+                      <StatusBadge status={selectedParcel.verificationStatus || (selectedParcel.status === 'Acquired' ? 'Verified' : 'Pending')} />
                     </div>
                   </div>
 

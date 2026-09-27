@@ -1,8 +1,7 @@
 {
-  "name": "bhumi-darpan",
+  "name": "temp-init",
   "private": true,
-  "version": "1.0.0",
-  "description": "BHUMI-DARPAN — Unified Digital Land Acquisition Lifecycle Platform",
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
