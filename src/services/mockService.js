@@ -1,8 +1,7 @@
 import { projects, parcels, documents, notifications, beneficiaries, possessionRecords, verificationRecords, analyticsData, dashboardKPIs, acquisitionStatusData, projectProgressData, compensationChartData, timelineChartData, districts, documentCategories, STAGES } from '../data/mockData.js'
 
-// Simulate async API calls (0ms in test environment for fast reliable unit testing)
-const isTestEnv = typeof process !== 'undefined' && (process.env.NODE_ENV === 'test' || process.env.VITEST)
-const delay = (ms = isTestEnv ? 0 : 100) => new Promise(resolve => setTimeout(resolve, ms))
+// Simulate async API calls (0ms default for fast responsive UI & test suites)
+const delay = (ms = 0) => new Promise(resolve => setTimeout(resolve, ms))
 
 let projectsStore = [...projects]
 
