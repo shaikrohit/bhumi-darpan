@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, MapPin, Calendar, Building2, FileText, CheckCircle2, Clock, Circle } from 'lucide-react'
+import { Building2, CheckCircle2 } from 'lucide-react'
 import { PageHeader, Card, StatusBadge, Button } from '../components/common'
 import { LoadingState, ErrorState, DataTable } from '../components/ui'
 import { getProjectById } from '../services/mockService'
@@ -44,44 +44,18 @@ export default function ProjectDetails() {
   }
 
   const currentStageIndex = STAGES.indexOf(project.currentStage)
+  const countDisplay = Array.isArray(project.parcels) ? project.parcels.length : (project.parcels || 0)
+  const parcelsArray = Array.isArray(project.parcels) ? project.parcels : (project.parcelsList || [])
 
   const parcelColumns = [
-    {
-      key: 'id',
-      label: 'PARCEL ID',
-      render: (p) => (
-        <Link
-          to={`/land-parcels?projectId=${project.id}&parcelId=${p.id}`}
-          className="font-bold text-blue-700 hover:underline font-mono"
-        >
-          {p.id}
-        </Link>
-      ),
-    },
-    { key: 'ulpin', label: 'ULPIN', render: (p) => <span className="font-mono text-xs">{p.ulpin}</span> },
-    { key: 'surveyNumber', label: 'SURVEY NO.', render: (p) => p.surveyNumber || p.surveyNo },
-    { key: 'owner', label: 'OWNER REF', render: (p) => p.ownerRef || p.owner },
+    { key: 'id', label: 'PARCEL ID', render: (p) => <span className="font-semibold text-blue-600">{p.id}</span> },
+    { key: 'ulpin', label: 'ULPIN' },
+    { key: 'surveyNumber', label: 'SURVEY NO.' },
+    { key: 'owner', label: 'OWNER' },
     { key: 'area', label: 'AREA' },
-    { key: 'verification', label: 'VERIFICATION', render: (p) => <StatusBadge status={p.verification || p.verificationStatus || 'Pending'} dot /> },
-    { key: 'status', label: 'ACQUISITION STATUS', render: (p) => <StatusBadge status={p.status || p.acquisitionStatus} /> },
-    {
-      key: 'action',
-      label: 'ACTION',
-      render: (p) => (
-        <Link
-          to={`/land-parcels?projectId=${project.id}&parcelId=${p.id}`}
-          className="text-xs font-semibold text-blue-600 hover:text-blue-800"
-        >
-          View GIS
-        </Link>
-      ),
-    },
+    { key: 'verification', label: 'VERIFICATION', render: (p) => <StatusBadge status={p.verification || 'Pending'} dot /> },
+    { key: 'status', label: 'ACQUISITION STATUS', render: (p) => <StatusBadge status={p.status} /> },
   ]
-
-  const projectParcels = project.parcels || []
-  const verifiedCount = projectParcels.filter((p) => (p.verification || p.verificationStatus) === 'Verified').length
-  const pendingCount = projectParcels.filter((p) => (p.verification || p.verificationStatus) === 'Pending').length
-  const reviewCount = projectParcels.filter((p) => (p.verification || p.verificationStatus) === 'Needs Review').length
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -119,9 +93,7 @@ export default function ProjectDetails() {
               </div>
               <div>
                 <p className="text-xs text-gray-500 font-medium">Affected Parcels</p>
-                <p className="text-sm font-semibold text-gray-900 mt-0.5">
-                  {Array.isArray(project.parcels) ? project.parcels.length : project.parcels} parcels
-                </p>
+                <p className="text-sm font-semibold text-gray-900 mt-0.5">{countDisplay} parcels</p>
               </div>
               <div>
                 <p className="text-xs text-gray-500 font-medium">Start Date</p>
@@ -141,34 +113,19 @@ export default function ProjectDetails() {
           {/* Affected Parcels List */}
           <Card
             title="Affected Land Parcels"
-            subtitle={`Total ${projectParcels.length} parcels mapped`}
+            subtitle={`Total ${countDisplay} parcels mapped`}
             action={
-              <Link to={`/land-parcels?projectId=${project.id}`}>
-                <Button variant="secondary" size="sm" icon={MapPin}>
+              <Link to={`/parcels?projectId=${project.id}`}>
+                <Button variant="secondary" size="sm">
                   View Parcels in GIS Workspace
                 </Button>
               </Link>
             }
             padding="none"
           >
-            <div className="p-4 bg-gray-50/70 border-b border-gray-200 grid grid-cols-3 gap-2 text-center text-xs">
-              <div className="bg-white p-2 rounded-lg border border-gray-200">
-                <span className="text-gray-500 block text-[10px]">Verified</span>
-                <span className="font-bold text-emerald-600 text-sm">{verifiedCount}</span>
-              </div>
-              <div className="bg-white p-2 rounded-lg border border-gray-200">
-                <span className="text-gray-500 block text-[10px]">Pending Verification</span>
-                <span className="font-bold text-amber-600 text-sm">{pendingCount}</span>
-              </div>
-              <div className="bg-white p-2 rounded-lg border border-gray-200">
-                <span className="text-gray-500 block text-[10px]">Needs Review</span>
-                <span className="font-bold text-red-600 text-sm">{reviewCount}</span>
-              </div>
-            </div>
-
             <DataTable
               columns={parcelColumns}
-              data={projectParcels}
+              data={parcelsArray}
               emptyMessage="No land parcels mapped to this project yet."
             />
           </Card>
@@ -181,7 +138,6 @@ export default function ProjectDetails() {
               {STAGES.map((stage, idx) => {
                 const isCompleted = idx < currentStageIndex
                 const isCurrent = idx === currentStageIndex
-                const isUpcoming = idx > currentStageIndex
 
                 return (
                   <div key={stage} className="relative flex items-start gap-3">

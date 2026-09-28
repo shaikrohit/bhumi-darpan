@@ -1,33 +1,48 @@
-import React from 'react';
-import { Search, X } from 'lucide-react';
+import React from 'react'
+import { Search, X } from 'lucide-react'
 
-export default function SearchField({ value = '', onChange, placeholder = 'Search...', label, className = '', onClear }) {
-  const ariaLabel = label || placeholder || 'Search';
+export default function SearchField({
+  value = '',
+  onChange,
+  placeholder = 'Search...',
+  className = '',
+  onClear,
+  'aria-label': ariaLabel,
+  ...props
+}) {
+  const handleChange = (e) => {
+    if (!onChange) return
+    onChange(e)
+  }
+
   return (
     <div className={`relative flex items-center w-full sm:max-w-md ${className}`}>
-      <label htmlFor="search-input" className="sr-only">{ariaLabel}</label>
+      <label htmlFor="search-input" className="sr-only">
+        {ariaLabel || 'Search'}
+      </label>
       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <Search className="h-5 w-5 text-gray-400" aria-hidden="true" />
+        <Search className="h-4 w-4 text-gray-400" aria-hidden="true" />
       </div>
       <input
         id="search-input"
         type="text"
         value={value}
-        onChange={(e) => onChange && onChange(e)}
-        className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-navy-500 focus:border-navy-500 sm:text-sm"
+        onChange={handleChange}
+        className="block w-full pl-9 pr-9 py-1.5 border border-gray-300 rounded-lg text-xs leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         placeholder={placeholder}
-        aria-label={ariaLabel}
+        aria-label={ariaLabel || 'Search'}
+        {...props}
       />
       {value && onClear && (
         <button
           type="button"
           onClick={onClear}
-          className="absolute inset-y-0 right-0 pr-3 flex items-center focus:outline-none focus:ring-2 focus:ring-navy-500 rounded-r-lg"
+          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer"
           aria-label="Clear search"
         >
-          <X className="h-5 w-5 text-gray-400 hover:text-gray-500" aria-hidden="true" />
+          <X className="h-4 w-4" aria-hidden="true" />
         </button>
       )}
     </div>
-  );
+  )
 }
