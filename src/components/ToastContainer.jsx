@@ -7,36 +7,51 @@ const icons = {
   info: Info,
 }
 
-const colors = {
-  success: 'bg-green-50 border-green-200 text-green-800',
-  error: 'bg-red-50 border-red-200 text-red-800',
-  warning: 'bg-amber-50 border-amber-200 text-amber-800',
-  info: 'bg-blue-50 border-blue-200 text-blue-800',
+const styles = {
+  success: 'bg-emerald-50 text-emerald-900 border-emerald-200',
+  error: 'bg-red-50 text-red-900 border-red-200',
+  warning: 'bg-amber-50 text-amber-900 border-amber-200',
+  info: 'bg-blue-50 text-blue-900 border-blue-200',
 }
 
 const iconColors = {
-  success: 'text-green-500',
-  error: 'text-red-500',
-  warning: 'text-amber-500',
-  info: 'text-blue-500',
+  success: 'text-emerald-600',
+  error: 'text-red-600',
+  warning: 'text-amber-600',
+  info: 'text-blue-600',
 }
 
-export default function ToastContainer({ toasts, onDismiss }) {
+export default function ToastContainer({ toasts = [], onDismiss }) {
   if (toasts.length === 0) return null
 
   return (
-    <div className="fixed bottom-4 right-4 z-[60] flex flex-col gap-2">
+    <div
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"
+    >
       {toasts.map((toast) => {
-        const Icon = icons[toast.type] || icons.info
+        const Icon = icons[toast.type] || Info
+        const style = styles[toast.type] || styles.info
+        const iconColor = iconColors[toast.type] || iconColors.info
+
         return (
           <div
             key={toast.id}
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg border shadow-lg animate-slide-in-right min-w-72 ${colors[toast.type] || colors.info}`}
+            className={`pointer-events-auto flex items-start gap-3 rounded-xl border p-4 shadow-lg transition-all duration-300 animate-slide-in-right ${style}`}
           >
-            <Icon className={`w-5 h-5 shrink-0 ${iconColors[toast.type] || iconColors.info}`} />
-            <p className="text-sm font-medium flex-1">{toast.message}</p>
-            <button onClick={() => onDismiss(toast.id)} className="p-0.5 rounded hover:bg-black/5">
-              <X className="w-4 h-4" />
+            <Icon className={`h-5 w-5 shrink-0 mt-0.5 ${iconColor}`} aria-hidden="true" />
+            <div className="flex-1 text-xs font-medium leading-relaxed">
+              {typeof toast.message === 'string' ? toast.message : JSON.stringify(toast.message)}
+            </div>
+            <button
+              type="button"
+              onClick={() => onDismiss(toast.id)}
+              aria-label="Dismiss notification"
+              className="shrink-0 rounded-lg p-1 text-gray-500 hover:bg-black/5 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
+            >
+              <X className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
         )

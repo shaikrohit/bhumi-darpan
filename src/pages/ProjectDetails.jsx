@@ -1,276 +1,162 @@
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, MapPin, Calendar, Building2, Users, FileText, CheckCircle2, Clock, Circle, ChevronDown } from 'lucide-react';
-import { projects, parcels } from '../data/mockData.js';
-import StatusBadge from '../components/StatusBadge.jsx';
-
-const LIFECYCLE_STAGES = [
-  'Proposal',
-  'Submission',
-  'Verification',
-  'Approval',
-  'Notification',
-  'Award',
-  'Compensation & R&R',
-  'Possession',
-  'Closure'
-];
+import React, { useState, useEffect } from 'react'
+import { useParams, Link } from 'react-router-dom'
+import { ArrowLeft, MapPin, Calendar, Building2, FileText, CheckCircle2, Clock, Circle } from 'lucide-react'
+import { PageHeader, Card, StatusBadge, Button } from '../components/common'
+import { LoadingState, ErrorState, DataTable } from '../components/ui'
+import { getProjectById } from '../services/mockService'
+import { STAGES } from '../data/mockData'
 
 export default function ProjectDetails() {
-  const { id } = useParams();
-  
-  // Find project
-  const project = projects.find((p) => p.id === id);
-  
-  // Related parcels
-  const projectParcels = parcels.filter((p) => p.projectId === id);
+  const params = useParams()
+  const targetId = params.projectId || params.id
+  const [project, setProject] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  if (!project) {
+  useEffect(() => {
+    let isMounted = true
+    setLoading(true)
+    setError(null)
+    getProjectById(targetId)
+      .then((res) => {
+        if (isMounted) {
+          setProject(res)
+          setLoading(false)
+        }
+      })
+      .catch((err) => {
+        if (isMounted) {
+          setError(err.message || 'Project not found')
+          setLoading(false)
+        }
+      })
+    return () => { isMounted = false }
+  }, [targetId])
+
+  if (loading) return <LoadingState message="Loading project details..." />
+  if (error || !project) {
     return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <div className="text-slate-400 mb-4">
-          <FileText className="w-16 h-16" />
-        </div>
-        <h2 className="text-xl font-semibold text-slate-700 mb-2">Project Not Found</h2>
-        <p className="text-slate-500 mb-6">The project ID you requested does not exist or has been removed.</p>
-        <Link to="/projects" className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
-          <ArrowLeft className="w-4 h-4" /> Back to Projects
-        </Link>
-      </div>
-    );
+      <ErrorState
+        title="Project Not Found"
+        message={`The requested project ID "${targetId}" could not be loaded.`}
+      />
+    )
   }
 
-  // Calculate timeline states
-  const currentStageIndex = LIFECYCLE_STAGES.indexOf(project.currentStage) !== -1 
-    ? LIFECYCLE_STAGES.indexOf(project.currentStage) 
-    : 0;
+  const currentStageIndex = STAGES.indexOf(project.currentStage)
+
+  const parcelColumns = [
+    { key: 'id', label: 'PARCEL ID', render: (p) => <span className="font-semibold text-blue-600">{p.id}</span> },
+    { key: 'ulpin', label: 'ULPIN' },
+    { key: 'surveyNumber', label: 'SURVEY NO.' },
+    { key: 'owner', label: 'OWNER' },
+    { key: 'area', label: 'AREA' },
+    { key: 'verification', label: 'VERIFICATION', render: (p) => <StatusBadge status={p.verification || 'Pending'} dot /> },
+    { key: 'status', label: 'ACQUISITION STATUS', render: (p) => <StatusBadge status={p.status} /> },
+  ]
 
   return (
-    <div className="space-y-6">
-      {/* Header and Back Button */}
-      <div>
-        <Link to="/projects" className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-blue-600 mb-4">
-          <ArrowLeft className="w-4 h-4 mr-1" />
-          Back to Projects
-        </Link>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-slate-900">{project.name}</h1>
-              <StatusBadge status={project.status} />
-            </div>
-            <p className="text-slate-500 mt-1">Project ID: {project.id}</p>
-          </div>
+    <div className="space-y-6 animate-fade-in">
+      <PageHeader
+        title={project.name}
+        subtitle={`Project ID: ${project.id} • ${project.district} District`}
+        breadcrumbs={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Projects', href: '/projects' },
+          { label: project.id },
+        ]}
+        actions={
           <div className="flex items-center gap-2">
-            <button className="px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50">
-              Download Report
-            </button>
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
-              Edit Project
-            </button>
+            <StatusBadge status={project.status} dot />
+            <Button variant="secondary" size="sm">Download Report</Button>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Left Column: Details & Metrics */}
+        {/* Left Column: Project Overview & Parcels */}
         <div className="lg:col-span-2 space-y-6">
-          
-          {/* Key Metrics */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-              <p className="text-sm font-medium text-slate-500 mb-1">Total Compensation</p>
-              <p className="text-2xl font-bold text-slate-900">{project.compensation || '₹0'}</p>
-            </div>
-            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-              <p className="text-sm font-medium text-slate-500 mb-1">Total Land Required</p>
-              <p className="text-2xl font-bold text-slate-900">{project.totalLand || '0'} Hectares</p>
-            </div>
-            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-              <p className="text-sm font-medium text-slate-500 mb-1">R&R Progress</p>
-              <p className="text-2xl font-bold text-slate-900">
-                {project.rrCompleted || 0} <span className="text-sm font-normal text-slate-500">/ {project.rrTotal || 0} Families</span>
-              </p>
-            </div>
-          </div>
-
-          {/* Project Overview Card */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
-              <h2 className="text-lg font-semibold text-slate-800">Project Overview</h2>
-            </div>
-            <div className="p-6">
-              <p className="text-slate-600 mb-6">{project.description || 'No description provided for this project.'}</p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                <div className="flex items-start gap-3">
-                  <Building2 className="w-5 h-5 text-slate-400 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-slate-500">Executing Authority</p>
-                    <p className="text-sm text-slate-900 font-medium">{project.authority || 'NHAI'}</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-slate-400 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-slate-500">Location</p>
-                    <p className="text-sm text-slate-900 font-medium">{project.district}{project.villages ? `, ${project.villages}` : ''}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <Calendar className="w-5 h-5 text-slate-400 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-slate-500">Start Date</p>
-                    <p className="text-sm text-slate-900 font-medium">{project.startDate || 'N/A'}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <Clock className="w-5 h-5 text-slate-400 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-slate-500">Expected Completion</p>
-                    <p className="text-sm text-slate-900 font-medium">{project.expectedEndDate || 'N/A'}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <FileText className="w-5 h-5 text-slate-400 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-slate-500">Affected Parcels</p>
-                    <p className="text-sm text-slate-900 font-medium">{project.parcels || projectParcels.length}</p>
-                  </div>
-                </div>
+          <Card title="Project Overview" icon={Building2}>
+            <p className="text-sm text-gray-600 leading-relaxed mb-4">
+              {project.description || 'Infrastructure land acquisition project.'}
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100">
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Executing Authority</p>
+                <p className="text-sm font-semibold text-gray-900 mt-0.5">{project.authority}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Total Land Required</p>
+                <p className="text-sm font-semibold text-gray-900 mt-0.5">{project.totalLand}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Affected Parcels</p>
+                <p className="text-sm font-semibold text-gray-900 mt-0.5">{project.parcels} parcels</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Start Date</p>
+                <p className="text-sm font-semibold text-gray-900 mt-0.5">{project.startDate}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Target Completion</p>
+                <p className="text-sm font-semibold text-gray-900 mt-0.5">{project.expectedCompletion || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Compensation Assessed</p>
+                <p className="text-sm font-semibold text-gray-900 mt-0.5">{project.compensation}</p>
               </div>
             </div>
-          </div>
+          </Card>
 
-          {/* Related Parcels Table */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-              <h2 className="text-lg font-semibold text-slate-800">Affected Land Parcels</h2>
-              <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                {projectParcels.length} Total
-              </span>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-slate-200">
-                <thead className="bg-white">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Parcel ID</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Owner</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Area</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-slate-200">
-                  {projectParcels.length > 0 ? (
-                    projectParcels.map((parcel) => (
-                      <tr key={parcel.id} className="hover:bg-slate-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
-                          <Link to={`/parcels/${parcel.id}`}>{parcel.id}</Link>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900">{parcel.ownerName}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{parcel.area} Hectares</td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <StatusBadge status={parcel.status} />
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="4" className="px-6 py-8 text-center text-slate-500">
-                        No parcels have been associated with this project yet.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          {/* Affected Parcels List */}
+          <Card title="Affected Land Parcels" subtitle={`Total ${project.parcels?.length || 0} parcels mapped`} padding="none">
+            <DataTable
+              columns={parcelColumns}
+              data={project.parcels || []}
+              emptyMessage="No land parcels mapped to this project yet."
+            />
+          </Card>
         </div>
 
-        {/* Right Column: Lifecycle Timeline */}
-        <div className="lg:col-span-1">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden sticky top-6">
-            <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
-              <h2 className="text-lg font-semibold text-slate-800">Lifecycle Timeline</h2>
-            </div>
-            <div className="p-6">
-              <div className="flow-root">
-                <ul role="list" className="-mb-8">
-                  {LIFECYCLE_STAGES.map((stage, stageIdx) => {
-                    const isCompleted = stageIdx < currentStageIndex;
-                    const isCurrent = stageIdx === currentStageIndex;
-                    const isLast = stageIdx === LIFECYCLE_STAGES.length - 1;
+        {/* Right Column: 9-Stage Lifecycle Timeline */}
+        <div className="space-y-6">
+          <Card title="Acquisition Lifecycle Timeline" subtitle="9-stage digital workflow progression">
+            <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-200">
+              {STAGES.map((stage, idx) => {
+                const isCompleted = idx < currentStageIndex
+                const isCurrent = idx === currentStageIndex
+                const isUpcoming = idx > currentStageIndex
 
-                    return (
-                      <li key={stage}>
-                        <div className="relative pb-8">
-                          {!isLast && (
-                            <span
-                              className={`absolute top-4 left-4 -ml-px h-full w-0.5 ${
-                                isCompleted ? 'bg-green-500' : 'bg-slate-200'
-                              }`}
-                              aria-hidden="true"
-                            />
-                          )}
-                          <div className="relative flex space-x-3">
-                            <div>
-                              <span
-                                className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white ${
-                                  isCompleted
-                                    ? 'bg-green-500'
-                                    : isCurrent
-                                    ? 'bg-blue-100'
-                                    : 'bg-slate-100'
-                                }`}
-                              >
-                                {isCompleted ? (
-                                  <CheckCircle2 className="w-5 h-5 text-white" aria-hidden="true" />
-                                ) : isCurrent ? (
-                                  <span className="relative flex h-3 w-3">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-600"></span>
-                                  </span>
-                                ) : (
-                                  <Circle className="w-3 h-3 text-slate-300" aria-hidden="true" />
-                                )}
-                              </span>
-                            </div>
-                            <div className="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
-                              <div>
-                                <p
-                                  className={`text-sm font-medium ${
-                                    isCompleted || isCurrent ? 'text-slate-900' : 'text-slate-500'
-                                  }`}
-                                >
-                                  {stage}
-                                </p>
-                                {isCurrent && (
-                                  <p className="text-xs text-blue-600 font-medium mt-1">Current Stage</p>
-                                )}
-                              </div>
-                              <div className="whitespace-nowrap text-right text-xs text-slate-500">
-                                {(isCompleted || isCurrent) && project.lastUpdated && (
-                                  <time dateTime={project.lastUpdated}>{project.lastUpdated}</time>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
+                return (
+                  <div key={stage} className="relative flex items-start gap-3">
+                    <span
+                      className={`absolute -left-6 top-0.5 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold ring-4 ring-white ${
+                        isCompleted
+                          ? 'bg-emerald-600 text-white'
+                          : isCurrent
+                          ? 'bg-blue-600 text-white ring-blue-100 animate-pulse'
+                          : 'bg-gray-200 text-gray-500'
+                      }`}
+                    >
+                      {isCompleted ? <CheckCircle2 className="w-3.5 h-3.5" /> : idx + 1}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className={`text-xs font-bold ${isCurrent ? 'text-blue-700 font-extrabold' : isCompleted ? 'text-gray-900' : 'text-gray-400'}`}>
+                        {stage}
+                      </p>
+                      {isCurrent && (
+                        <span className="inline-block mt-0.5 text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
+                          Current Active Stage
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
             </div>
-          </div>
+          </Card>
         </div>
-
       </div>
     </div>
-  );
+  )
 }

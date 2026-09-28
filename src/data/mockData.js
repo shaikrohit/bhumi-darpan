@@ -72,7 +72,7 @@ export const timelineChartData = [
 // ── Projects ─────────────────────────────────────────────────
 export const projects = [
   {
-    id: 'LA-2026-001',
+    id: 'BD-P-001',
     name: 'National Highway NH-16 Expansion',
     authority: 'National Highways Authority of India',
     district: 'Guntur',
@@ -103,7 +103,7 @@ export const projects = [
     ],
   },
   {
-    id: 'LA-2026-002',
+    id: 'BD-P-002',
     name: 'Nagarjuna Sagar Canal Modernization',
     authority: 'Irrigation Department, AP',
     district: 'Krishna',
@@ -134,7 +134,7 @@ export const projects = [
     ],
   },
   {
-    id: 'LA-2026-003',
+    id: 'BD-P-003',
     name: 'Visakhapatnam–Chennai Industrial Corridor',
     authority: 'AP Industrial Infrastructure Corporation',
     district: 'Visakhapatnam',
@@ -165,7 +165,7 @@ export const projects = [
     ],
   },
   {
-    id: 'LA-2026-004',
+    id: 'BD-P-004',
     name: 'East Coast Railway Doubling',
     authority: 'Ministry of Railways',
     district: 'Prakasam',
@@ -196,7 +196,7 @@ export const projects = [
     ],
   },
   {
-    id: 'LA-2026-005',
+    id: 'BD-P-005',
     name: 'Vijayawada Smart City Phase II',
     authority: 'Smart City Mission, MoHUA',
     district: 'NTR (Vijayawada)',
@@ -227,7 +227,7 @@ export const projects = [
     ],
   },
   {
-    id: 'LA-2026-006',
+    id: 'BD-P-006',
     name: 'Amaravati Capital Region Ring Road',
     authority: 'CRDA, AP',
     district: 'Guntur',
@@ -258,7 +258,7 @@ export const projects = [
     ],
   },
   {
-    id: 'LA-2026-007',
+    id: 'BD-P-007',
     name: 'Tirupati Airport Expansion',
     authority: 'Airports Authority of India',
     district: 'Tirupati',
@@ -289,7 +289,7 @@ export const projects = [
     ],
   },
   {
-    id: 'LA-2026-008',
+    id: 'BD-P-008',
     name: 'Kadapa Steel Plant Approach Road',
     authority: 'AP Roads & Buildings Dept',
     district: 'YSR Kadapa',
@@ -323,75 +323,75 @@ export const projects = [
 
 // ── Land Parcels ─────────────────────────────────────────────
 export const parcels = [
-  { id: 'BH-AP-004582', ulpin: 'AP-15-042-000142', surveyNo: '142/3A', village: 'Ramapuram', district: 'Guntur', area: '2.84 acres', landType: 'Agricultural', verification: 'Verified', status: 'Under Acquisition', projectId: 'LA-2026-001', owner: 'Venkata Ramaiah S.', ownerAadhaar: 'XXXX-XXXX-4582', marketValue: '₹38.2 L', geoCoords: '16.3067° N, 80.4365° E' },
-  { id: 'BH-AP-004583', ulpin: 'AP-15-042-000143', surveyNo: '142/3B', village: 'Ramapuram', district: 'Guntur', area: '1.92 acres', landType: 'Agricultural', verification: 'Verified', status: 'Acquired', projectId: 'LA-2026-001', owner: 'Lakshmi Devi P.', ownerAadhaar: 'XXXX-XXXX-4583', marketValue: '₹25.8 L', geoCoords: '16.3071° N, 80.4368° E' },
-  { id: 'BH-AP-004584', ulpin: 'AP-15-042-000144', surveyNo: '143/1', village: 'Ramapuram', district: 'Guntur', area: '4.12 acres', landType: 'Agricultural', verification: 'Pending', status: 'Under Verification', projectId: 'LA-2026-001', owner: 'Suresh Babu K.', ownerAadhaar: 'XXXX-XXXX-4584', marketValue: '₹55.4 L', geoCoords: '16.3075° N, 80.4372° E' },
-  { id: 'BH-AP-004585', ulpin: 'AP-15-042-000145', surveyNo: '143/2A', village: 'Chebrolu', district: 'Guntur', area: '3.56 acres', landType: 'Residential', verification: 'Verified', status: 'Under Acquisition', projectId: 'LA-2026-001', owner: 'Rajesh Kumar M.', ownerAadhaar: 'XXXX-XXXX-4585', marketValue: '₹1.28 Cr', geoCoords: '16.2892° N, 80.4521° E' },
-  { id: 'BH-AP-004586', ulpin: 'AP-15-042-000146', surveyNo: '144/1A', village: 'Chebrolu', district: 'Guntur', area: '2.18 acres', landType: 'Commercial', verification: 'Under Review', status: 'Under Verification', projectId: 'LA-2026-001', owner: 'Padma Rao T.', ownerAadhaar: 'XXXX-XXXX-4586', marketValue: '₹2.14 Cr', geoCoords: '16.2888° N, 80.4525° E' },
-  { id: 'BH-AP-005101', ulpin: 'AP-12-028-000201', surveyNo: '88/2', village: 'Ibrahimpatnam', district: 'Krishna', area: '5.24 acres', landType: 'Agricultural', verification: 'Pending', status: 'Under Verification', projectId: 'LA-2026-002', owner: 'Mohammed Ismail', ownerAadhaar: 'XXXX-XXXX-5101', marketValue: '₹62.8 L', geoCoords: '16.5521° N, 80.5042° E' },
-  { id: 'BH-AP-005102', ulpin: 'AP-12-028-000202', surveyNo: '88/3', village: 'Ibrahimpatnam', district: 'Krishna', area: '3.88 acres', landType: 'Agricultural', verification: 'Verified', status: 'Under Acquisition', projectId: 'LA-2026-002', owner: 'Srinivasa Rao D.', ownerAadhaar: 'XXXX-XXXX-5102', marketValue: '₹46.6 L', geoCoords: '16.5525° N, 80.5046° E' },
-  { id: 'BH-AP-005201', ulpin: 'AP-04-015-000301', surveyNo: '256/1', village: 'Atchutapuram', district: 'Visakhapatnam', area: '8.42 acres', landType: 'Industrial', verification: 'Under Review', status: 'Under Verification', projectId: 'LA-2026-003', owner: 'Industrial Dev. Corp.', ownerAadhaar: 'N/A', marketValue: '₹3.82 Cr', geoCoords: '17.7324° N, 83.2145° E' },
-  { id: 'BH-AP-005202', ulpin: 'AP-04-015-000302', surveyNo: '256/2', village: 'Atchutapuram', district: 'Visakhapatnam', area: '6.18 acres', landType: 'Agricultural', verification: 'Verified', status: 'Under Acquisition', projectId: 'LA-2026-003', owner: 'Appala Naidu V.', ownerAadhaar: 'XXXX-XXXX-5202', marketValue: '₹1.24 Cr', geoCoords: '17.7328° N, 83.2149° E' },
-  { id: 'BH-AP-005301', ulpin: 'AP-18-008-000401', surveyNo: '72/1A', village: 'Ongole', district: 'Prakasam', area: '1.84 acres', landType: 'Agricultural', verification: 'Verified', status: 'Acquired', projectId: 'LA-2026-004', owner: 'Narasimha Rao B.', ownerAadhaar: 'XXXX-XXXX-5301', marketValue: '₹18.4 L', geoCoords: '15.5057° N, 80.0499° E' },
-  { id: 'BH-AP-005302', ulpin: 'AP-18-008-000402', surveyNo: '72/2', village: 'Ongole', district: 'Prakasam', area: '2.36 acres', landType: 'Residential', verification: 'Verified', status: 'Acquired', projectId: 'LA-2026-004', owner: 'Satyanarayana K.', ownerAadhaar: 'XXXX-XXXX-5302', marketValue: '₹84.2 L', geoCoords: '15.5061° N, 80.0503° E' },
-  { id: 'BH-AP-005401', ulpin: 'AP-15-035-000501', surveyNo: '198/1', village: 'Mangalagiri', district: 'Guntur', area: '3.42 acres', landType: 'Agricultural', verification: 'Verified', status: 'Under Acquisition', projectId: 'LA-2026-006', owner: 'Venkateswara Rao G.', ownerAadhaar: 'XXXX-XXXX-5401', marketValue: '₹1.52 Cr', geoCoords: '16.4321° N, 80.5612° E' },
+  { id: 'BD-PARCEL-001', ulpin: 'AP-15-042-000142', surveyNo: '142/3A', village: 'Ramapuram', district: 'Guntur', area: '2.84 acres', landType: 'Agricultural', verification: 'Verified', status: 'Under Acquisition', projectId: 'BD-P-001', owner: 'Venkata Ramaiah S.', ownerAadhaar: 'XXXX-XXXX-4582', marketValue: '₹38.2 L', geoCoords: '16.3067° N, 80.4365° E' },
+  { id: 'BD-PARCEL-002', ulpin: 'AP-15-042-000143', surveyNo: '142/3B', village: 'Ramapuram', district: 'Guntur', area: '1.92 acres', landType: 'Agricultural', verification: 'Verified', status: 'Acquired', projectId: 'BD-P-001', owner: 'Lakshmi Devi P.', ownerAadhaar: 'XXXX-XXXX-4583', marketValue: '₹25.8 L', geoCoords: '16.3071° N, 80.4368° E' },
+  { id: 'BD-PARCEL-003', ulpin: 'AP-15-042-000144', surveyNo: '143/1', village: 'Ramapuram', district: 'Guntur', area: '4.12 acres', landType: 'Agricultural', verification: 'Pending', status: 'Under Verification', projectId: 'BD-P-001', owner: 'Suresh Babu K.', ownerAadhaar: 'XXXX-XXXX-4584', marketValue: '₹55.4 L', geoCoords: '16.3075° N, 80.4372° E' },
+  { id: 'BD-PARCEL-004', ulpin: 'AP-15-042-000145', surveyNo: '143/2A', village: 'Chebrolu', district: 'Guntur', area: '3.56 acres', landType: 'Residential', verification: 'Verified', status: 'Under Acquisition', projectId: 'BD-P-001', owner: 'Rajesh Kumar M.', ownerAadhaar: 'XXXX-XXXX-4585', marketValue: '₹1.28 Cr', geoCoords: '16.2892° N, 80.4521° E' },
+  { id: 'BD-PARCEL-005', ulpin: 'AP-15-042-000146', surveyNo: '144/1A', village: 'Chebrolu', district: 'Guntur', area: '2.18 acres', landType: 'Commercial', verification: 'Under Review', status: 'Under Verification', projectId: 'BD-P-001', owner: 'Padma Rao T.', ownerAadhaar: 'XXXX-XXXX-4586', marketValue: '₹2.14 Cr', geoCoords: '16.2888° N, 80.4525° E' },
+  { id: 'BD-PARCEL-006', ulpin: 'AP-12-028-000201', surveyNo: '88/2', village: 'Ibrahimpatnam', district: 'Krishna', area: '5.24 acres', landType: 'Agricultural', verification: 'Pending', status: 'Under Verification', projectId: 'BD-P-002', owner: 'Mohammed Ismail', ownerAadhaar: 'XXXX-XXXX-5101', marketValue: '₹62.8 L', geoCoords: '16.5521° N, 80.5042° E' },
+  { id: 'BD-PARCEL-007', ulpin: 'AP-12-028-000202', surveyNo: '88/3', village: 'Ibrahimpatnam', district: 'Krishna', area: '3.88 acres', landType: 'Agricultural', verification: 'Verified', status: 'Under Acquisition', projectId: 'BD-P-002', owner: 'Srinivasa Rao D.', ownerAadhaar: 'XXXX-XXXX-5102', marketValue: '₹46.6 L', geoCoords: '16.5525° N, 80.5046° E' },
+  { id: 'BD-PARCEL-008', ulpin: 'AP-04-015-000301', surveyNo: '256/1', village: 'Atchutapuram', district: 'Visakhapatnam', area: '8.42 acres', landType: 'Industrial', verification: 'Under Review', status: 'Under Verification', projectId: 'BD-P-003', owner: 'Industrial Dev. Corp.', ownerAadhaar: 'N/A', marketValue: '₹3.82 Cr', geoCoords: '17.7324° N, 83.2145° E' },
+  { id: 'BD-PARCEL-009', ulpin: 'AP-04-015-000302', surveyNo: '256/2', village: 'Atchutapuram', district: 'Visakhapatnam', area: '6.18 acres', landType: 'Agricultural', verification: 'Verified', status: 'Under Acquisition', projectId: 'BD-P-003', owner: 'Appala Naidu V.', ownerAadhaar: 'XXXX-XXXX-5202', marketValue: '₹1.24 Cr', geoCoords: '17.7328° N, 83.2149° E' },
+  { id: 'BD-PARCEL-010', ulpin: 'AP-18-008-000401', surveyNo: '72/1A', village: 'Ongole', district: 'Prakasam', area: '1.84 acres', landType: 'Agricultural', verification: 'Verified', status: 'Acquired', projectId: 'BD-P-004', owner: 'Narasimha Rao B.', ownerAadhaar: 'XXXX-XXXX-5301', marketValue: '₹18.4 L', geoCoords: '15.5057° N, 80.0499° E' },
+  { id: 'BD-PARCEL-011', ulpin: 'AP-18-008-000402', surveyNo: '72/2', village: 'Ongole', district: 'Prakasam', area: '2.36 acres', landType: 'Residential', verification: 'Verified', status: 'Acquired', projectId: 'BD-P-004', owner: 'Satyanarayana K.', ownerAadhaar: 'XXXX-XXXX-5302', marketValue: '₹84.2 L', geoCoords: '15.5061° N, 80.0503° E' },
+  { id: 'BD-PARCEL-012', ulpin: 'AP-15-035-000501', surveyNo: '198/1', village: 'Mangalagiri', district: 'Guntur', area: '3.42 acres', landType: 'Agricultural', verification: 'Verified', status: 'Under Acquisition', projectId: 'BD-P-006', owner: 'Venkateswara Rao G.', ownerAadhaar: 'XXXX-XXXX-5401', marketValue: '₹1.52 Cr', geoCoords: '16.4321° N, 80.5612° E' },
 ];
 
 // ── Documents ────────────────────────────────────────────────
 export const documents = [
-  { id: 'DOC-001', name: 'Land Records — Survey 142/3A', type: 'Land Records', category: 'Land Records', projectId: 'LA-2026-001', parcelId: 'BH-AP-004582', uploadDate: '2025-04-22', version: 'v2.1', verificationStatus: 'Verified', auditStatus: 'Audited', size: '2.4 MB' },
-  { id: 'DOC-002', name: 'Ownership Certificate — Venkata Ramaiah', type: 'Ownership Documents', category: 'Ownership Documents', projectId: 'LA-2026-001', parcelId: 'BH-AP-004582', uploadDate: '2025-04-25', version: 'v1.0', verificationStatus: 'Verified', auditStatus: 'Audited', size: '1.8 MB' },
-  { id: 'DOC-003', name: 'Cadastral Map — Ramapuram Village', type: 'Cadastral Maps', category: 'Cadastral Maps', projectId: 'LA-2026-001', parcelId: null, uploadDate: '2025-05-10', version: 'v3.0', verificationStatus: 'Verified', auditStatus: 'Audited', size: '8.6 MB' },
-  { id: 'DOC-004', name: 'Section 11(1) Notification — NH-16', type: 'Notifications', category: 'Notifications', projectId: 'LA-2026-001', parcelId: null, uploadDate: '2025-10-08', version: 'v1.0', verificationStatus: 'Verified', auditStatus: 'Audited', size: '3.2 MB' },
-  { id: 'DOC-005', name: 'Award Declaration — Survey 142/3A', type: 'Awards', category: 'Awards', projectId: 'LA-2026-001', parcelId: 'BH-AP-004582', uploadDate: '2025-12-20', version: 'v1.0', verificationStatus: 'Verified', auditStatus: 'Pending', size: '4.1 MB' },
-  { id: 'DOC-006', name: 'Compensation Assessment — Batch A', type: 'Compensation Documents', category: 'Compensation Documents', projectId: 'LA-2026-001', parcelId: null, uploadDate: '2026-02-15', version: 'v2.0', verificationStatus: 'Under Review', auditStatus: 'Pending', size: '5.8 MB' },
-  { id: 'DOC-007', name: 'R&R Plan — NH-16 Affected Families', type: 'R&R Documents', category: 'R&R Documents', projectId: 'LA-2026-001', parcelId: null, uploadDate: '2026-03-01', version: 'v1.2', verificationStatus: 'Verified', auditStatus: 'Audited', size: '6.4 MB' },
-  { id: 'DOC-008', name: 'Land Records — Survey 88/2', type: 'Land Records', category: 'Land Records', projectId: 'LA-2026-002', parcelId: 'BH-AP-005101', uploadDate: '2025-09-18', version: 'v1.0', verificationStatus: 'Pending', auditStatus: 'Pending', size: '2.1 MB' },
-  { id: 'DOC-009', name: 'Environmental Impact Assessment — VCIC', type: 'Land Records', category: 'Land Records', projectId: 'LA-2026-003', parcelId: null, uploadDate: '2025-04-12', version: 'v1.0', verificationStatus: 'Verified', auditStatus: 'Audited', size: '12.4 MB' },
-  { id: 'DOC-010', name: 'Possession Certificate — Survey 72/1A', type: 'Land Records', category: 'Land Records', projectId: 'LA-2026-004', parcelId: 'BH-AP-005301', uploadDate: '2026-05-20', version: 'v1.0', verificationStatus: 'Verified', auditStatus: 'Audited', size: '1.6 MB' },
+  { id: 'BD-DOC-001', name: 'Land Records — Survey 142/3A', type: 'Land Records', category: 'Land Records', projectId: 'BD-P-001', parcelId: 'BD-PARCEL-001', uploadDate: '2025-04-22', version: 'v2.1', verificationStatus: 'Verified', auditStatus: 'Audited', size: '2.4 MB' },
+  { id: 'BD-DOC-002', name: 'Ownership Certificate — Venkata Ramaiah', type: 'Ownership Documents', category: 'Ownership Documents', projectId: 'BD-P-001', parcelId: 'BD-PARCEL-001', uploadDate: '2025-04-25', version: 'v1.0', verificationStatus: 'Verified', auditStatus: 'Audited', size: '1.8 MB' },
+  { id: 'BD-DOC-003', name: 'Cadastral Map — Ramapuram Village', type: 'Cadastral Maps', category: 'Cadastral Maps', projectId: 'BD-P-001', parcelId: null, uploadDate: '2025-05-10', version: 'v3.0', verificationStatus: 'Verified', auditStatus: 'Audited', size: '8.6 MB' },
+  { id: 'BD-DOC-004', name: 'Section 11(1) Notification — NH-16', type: 'Notifications', category: 'Notifications', projectId: 'BD-P-001', parcelId: null, uploadDate: '2025-10-08', version: 'v1.0', verificationStatus: 'Verified', auditStatus: 'Audited', size: '3.2 MB' },
+  { id: 'BD-DOC-005', name: 'Award Declaration — Survey 142/3A', type: 'Awards', category: 'Awards', projectId: 'BD-P-001', parcelId: 'BD-PARCEL-001', uploadDate: '2025-12-20', version: 'v1.0', verificationStatus: 'Verified', auditStatus: 'Pending', size: '4.1 MB' },
+  { id: 'BD-DOC-006', name: 'Compensation Assessment — Batch A', type: 'Compensation Documents', category: 'Compensation Documents', projectId: 'BD-P-001', parcelId: null, uploadDate: '2026-02-15', version: 'v2.0', verificationStatus: 'Under Review', auditStatus: 'Pending', size: '5.8 MB' },
+  { id: 'BD-DOC-007', name: 'R&R Plan — NH-16 Affected Families', type: 'R&R Documents', category: 'R&R Documents', projectId: 'BD-P-001', parcelId: null, uploadDate: '2026-03-01', version: 'v1.2', verificationStatus: 'Verified', auditStatus: 'Audited', size: '6.4 MB' },
+  { id: 'BD-DOC-008', name: 'Land Records — Survey 88/2', type: 'Land Records', category: 'Land Records', projectId: 'BD-P-002', parcelId: 'BD-PARCEL-006', uploadDate: '2025-09-18', version: 'v1.0', verificationStatus: 'Pending', auditStatus: 'Pending', size: '2.1 MB' },
+  { id: 'BD-DOC-009', name: 'Environmental Impact Assessment — VCIC', type: 'Land Records', category: 'Land Records', projectId: 'BD-P-003', parcelId: null, uploadDate: '2025-04-12', version: 'v1.0', verificationStatus: 'Verified', auditStatus: 'Audited', size: '12.4 MB' },
+  { id: 'BD-DOC-010', name: 'Possession Certificate — Survey 72/1A', type: 'Land Records', category: 'Land Records', projectId: 'BD-P-004', parcelId: 'BD-PARCEL-010', uploadDate: '2026-05-20', version: 'v1.0', verificationStatus: 'Verified', auditStatus: 'Audited', size: '1.6 MB' },
 ];
 
 // ── Notifications ────────────────────────────────────────────
 export const notifications = [
-  { id: 'N-001', title: 'Compensation Verification Pending', message: 'Case LA-2026-001 has 8 parcels with pending compensation verification. Due date: Oct 15, 2026.', severity: 'critical', category: 'Compensation', date: '2026-09-27', read: false, caseId: 'LA-2026-001' },
-  { id: 'N-002', title: 'R&R Completion Delayed', message: 'R&R for 3 families in LA-2026-003 has exceeded the 90-day deadline. Immediate action required.', severity: 'critical', category: 'R&R', date: '2026-09-26', read: false, caseId: 'LA-2026-003' },
-  { id: 'N-003', title: 'Document Verification Complete', message: 'All documents for parcels in Batch B of LA-2026-001 have been verified and audited.', severity: 'info', category: 'Documents', date: '2026-09-25', read: true, caseId: 'LA-2026-001' },
-  { id: 'N-004', title: 'Approval Pending — Industrial Corridor', message: 'LA-2026-003 approval has been pending for 45 days. Escalation recommended.', severity: 'warning', category: 'Approval', date: '2026-09-24', read: false, caseId: 'LA-2026-003' },
-  { id: 'N-005', title: 'Possession Ready', message: 'Parcel BH-AP-005301 in LA-2026-004 is ready for final possession handover.', severity: 'info', category: 'Possession', date: '2026-09-24', read: true, caseId: 'LA-2026-004' },
-  { id: 'N-006', title: 'New Project Submission', message: 'Smart City Phase II (LA-2026-005) proposal has been submitted for review.', severity: 'info', category: 'Submission', date: '2026-09-23', read: true, caseId: 'LA-2026-005' },
-  { id: 'N-007', title: 'GIS Boundary Mismatch', message: 'Survey 143/1 in Ramapuram shows a 0.12 acre discrepancy between recorded and GIS-measured area.', severity: 'warning', category: 'Verification', date: '2026-09-22', read: false, caseId: 'LA-2026-001' },
-  { id: 'N-008', title: 'Compensation Disbursement Complete', message: '₹2.1 Cr disbursed to 6 beneficiaries in LA-2026-004 Railway Expansion project.', severity: 'info', category: 'Compensation', date: '2026-09-21', read: true, caseId: 'LA-2026-004' },
-  { id: 'N-009', title: 'Award Declaration Upcoming', message: 'Award declaration for LA-2026-006 Amaravati Ring Road scheduled for Oct 5, 2026.', severity: 'warning', category: 'Award', date: '2026-09-20', read: false, caseId: 'LA-2026-006' },
-  { id: 'N-010', title: 'System Maintenance Scheduled', message: 'BHUMI-DARPAN will undergo scheduled maintenance on Oct 1, 2026 from 2:00 AM to 6:00 AM IST.', severity: 'info', category: 'System', date: '2026-09-19', read: true, caseId: null },
+  { id: 'BD-NOTIF-001', title: 'Compensation Verification Pending', message: 'Case BD-P-001 has 8 parcels with pending compensation verification. Due date: Oct 15, 2026.', severity: 'critical', category: 'Compensation', date: '2026-09-27', read: false, caseId: 'BD-P-001' },
+  { id: 'BD-NOTIF-002', title: 'R&R Completion Delayed', message: 'R&R for 3 families in BD-P-003 has exceeded the 90-day deadline. Immediate action required.', severity: 'critical', category: 'R&R', date: '2026-09-26', read: false, caseId: 'BD-P-003' },
+  { id: 'BD-NOTIF-003', title: 'Document Verification Complete', message: 'All documents for parcels in Batch B of BD-P-001 have been verified and audited.', severity: 'info', category: 'Documents', date: '2026-09-25', read: true, caseId: 'BD-P-001' },
+  { id: 'BD-NOTIF-004', title: 'Approval Pending — Industrial Corridor', message: 'BD-P-003 approval has been pending for 45 days. Escalation recommended.', severity: 'warning', category: 'Approval', date: '2026-09-24', read: false, caseId: 'BD-P-003' },
+  { id: 'BD-NOTIF-005', title: 'Possession Ready', message: 'Parcel BD-PARCEL-010 in BD-P-004 is ready for final possession handover.', severity: 'info', category: 'Possession', date: '2026-09-24', read: true, caseId: 'BD-P-004' },
+  { id: 'BD-NOTIF-006', title: 'New Project Submission', message: 'Smart City Phase II (BD-P-005) proposal has been submitted for review.', severity: 'info', category: 'Submission', date: '2026-09-23', read: true, caseId: 'BD-P-005' },
+  { id: 'BD-NOTIF-007', title: 'GIS Boundary Mismatch', message: 'Survey 143/1 in Ramapuram shows a 0.12 acre discrepancy between recorded and GIS-measured area.', severity: 'warning', category: 'Verification', date: '2026-09-22', read: false, caseId: 'BD-P-001' },
+  { id: 'BD-NOTIF-008', title: 'Compensation Disbursement Complete', message: '₹2.1 Cr disbursed to 6 beneficiaries in BD-P-004 Railway Expansion project.', severity: 'info', category: 'Compensation', date: '2026-09-21', read: true, caseId: 'BD-P-004' },
+  { id: 'BD-NOTIF-009', title: 'Award Declaration Upcoming', message: 'Award declaration for BD-P-006 Amaravati Ring Road scheduled for Oct 5, 2026.', severity: 'warning', category: 'Award', date: '2026-09-20', read: false, caseId: 'BD-P-006' },
+  { id: 'BD-NOTIF-010', title: 'System Maintenance Scheduled', message: 'BHUMI-DARPAN will undergo scheduled maintenance on Oct 1, 2026 from 2:00 AM to 6:00 AM IST.', severity: 'info', category: 'System', date: '2026-09-19', read: true, caseId: null },
 ];
 
 // ── Beneficiaries (Compensation & R&R) ───────────────────────
 export const beneficiaries = [
-  { familyId: 'FAM-001', name: 'Venkata Ramaiah S.', parcelId: 'BH-AP-004582', village: 'Ramapuram', district: 'Guntur', entitlement: '₹38.2 L', compensation: '₹38.2 L', compensationStatus: 'Disbursed', rrStatus: 'Completed', rrType: 'Cash Compensation', paymentDate: '2026-06-15', projectId: 'LA-2026-001' },
-  { familyId: 'FAM-002', name: 'Lakshmi Devi P.', parcelId: 'BH-AP-004583', village: 'Ramapuram', district: 'Guntur', entitlement: '₹25.8 L', compensation: '₹25.8 L', compensationStatus: 'Disbursed', rrStatus: 'Completed', rrType: 'Alternative Land', paymentDate: '2026-06-18', projectId: 'LA-2026-001' },
-  { familyId: 'FAM-003', name: 'Suresh Babu K.', parcelId: 'BH-AP-004584', village: 'Ramapuram', district: 'Guntur', entitlement: '₹55.4 L', compensation: '₹0', compensationStatus: 'Under Verification', rrStatus: 'Pending', rrType: 'Employment', paymentDate: null, projectId: 'LA-2026-001' },
-  { familyId: 'FAM-004', name: 'Rajesh Kumar M.', parcelId: 'BH-AP-004585', village: 'Chebrolu', district: 'Guntur', entitlement: '₹1.28 Cr', compensation: '₹64.0 L', compensationStatus: 'Partial', rrStatus: 'In Progress', rrType: 'Resettlement Colony', paymentDate: '2026-07-20', projectId: 'LA-2026-001' },
-  { familyId: 'FAM-005', name: 'Padma Rao T.', parcelId: 'BH-AP-004586', village: 'Chebrolu', district: 'Guntur', entitlement: '₹2.14 Cr', compensation: '₹0', compensationStatus: 'Pending', rrStatus: 'Pending', rrType: 'Cash Compensation', paymentDate: null, projectId: 'LA-2026-001' },
-  { familyId: 'FAM-006', name: 'Narasimha Rao B.', parcelId: 'BH-AP-005301', village: 'Ongole', district: 'Prakasam', entitlement: '₹18.4 L', compensation: '₹18.4 L', compensationStatus: 'Disbursed', rrStatus: 'Completed', rrType: 'Cash Compensation', paymentDate: '2025-12-10', projectId: 'LA-2026-004' },
-  { familyId: 'FAM-007', name: 'Satyanarayana K.', parcelId: 'BH-AP-005302', village: 'Ongole', district: 'Prakasam', entitlement: '₹84.2 L', compensation: '₹84.2 L', compensationStatus: 'Disbursed', rrStatus: 'Completed', rrType: 'Alternative Land', paymentDate: '2025-12-15', projectId: 'LA-2026-004' },
-  { familyId: 'FAM-008', name: 'Venkateswara Rao G.', parcelId: 'BH-AP-005401', village: 'Mangalagiri', district: 'Guntur', entitlement: '₹1.52 Cr', compensation: '₹0', compensationStatus: 'Pending', rrStatus: 'Pending', rrType: 'Resettlement Colony', paymentDate: null, projectId: 'LA-2026-006' },
+  { familyId: 'BD-FAM-001', name: 'Venkata Ramaiah S.', parcelId: 'BD-PARCEL-001', village: 'Ramapuram', district: 'Guntur', entitlement: '₹38.2 L', compensation: '₹38.2 L', compensationStatus: 'Disbursed', rrStatus: 'Completed', rrType: 'Cash Compensation', paymentDate: '2026-06-15', projectId: 'BD-P-001' },
+  { familyId: 'BD-FAM-002', name: 'Lakshmi Devi P.', parcelId: 'BD-PARCEL-002', village: 'Ramapuram', district: 'Guntur', entitlement: '₹25.8 L', compensation: '₹25.8 L', compensationStatus: 'Disbursed', rrStatus: 'Completed', rrType: 'Alternative Land', paymentDate: '2026-06-18', projectId: 'BD-P-001' },
+  { familyId: 'BD-FAM-003', name: 'Suresh Babu K.', parcelId: 'BD-PARCEL-003', village: 'Ramapuram', district: 'Guntur', entitlement: '₹55.4 L', compensation: '₹0', compensationStatus: 'Under Verification', rrStatus: 'Pending', rrType: 'Employment', paymentDate: null, projectId: 'BD-P-001' },
+  { familyId: 'BD-FAM-004', name: 'Rajesh Kumar M.', parcelId: 'BD-PARCEL-004', village: 'Chebrolu', district: 'Guntur', entitlement: '₹1.28 Cr', compensation: '₹64.0 L', compensationStatus: 'Partial', rrStatus: 'In Progress', rrType: 'Resettlement Colony', paymentDate: '2026-07-20', projectId: 'BD-P-001' },
+  { familyId: 'BD-FAM-005', name: 'Padma Rao T.', parcelId: 'BD-PARCEL-005', village: 'Chebrolu', district: 'Guntur', entitlement: '₹2.14 Cr', compensation: '₹0', compensationStatus: 'Pending', rrStatus: 'Pending', rrType: 'Cash Compensation', paymentDate: null, projectId: 'BD-P-001' },
+  { familyId: 'BD-FAM-006', name: 'Narasimha Rao B.', parcelId: 'BD-PARCEL-010', village: 'Ongole', district: 'Prakasam', entitlement: '₹18.4 L', compensation: '₹18.4 L', compensationStatus: 'Disbursed', rrStatus: 'Completed', rrType: 'Cash Compensation', paymentDate: '2025-12-10', projectId: 'BD-P-004' },
+  { familyId: 'BD-FAM-007', name: 'Satyanarayana K.', parcelId: 'BD-PARCEL-011', village: 'Ongole', district: 'Prakasam', entitlement: '₹84.2 L', compensation: '₹84.2 L', compensationStatus: 'Disbursed', rrStatus: 'Completed', rrType: 'Alternative Land', paymentDate: '2025-12-15', projectId: 'BD-P-004' },
+  { familyId: 'BD-FAM-008', name: 'Venkateswara Rao G.', parcelId: 'BD-PARCEL-012', village: 'Mangalagiri', district: 'Guntur', entitlement: '₹1.52 Cr', compensation: '₹0', compensationStatus: 'Pending', rrStatus: 'Pending', rrType: 'Resettlement Colony', paymentDate: null, projectId: 'BD-P-006' },
 ];
 
 // ── Possession Records ───────────────────────────────────────
 export const possessionRecords = [
-  { id: 'POS-001', parcelId: 'BH-AP-005301', projectId: 'LA-2026-004', village: 'Ongole', district: 'Prakasam', area: '1.84 acres', awardCompleted: true, compensationCompleted: true, rrCompleted: true, legalApprovals: true, possessionReady: true, possessionDate: '2026-08-15', handoverStatus: 'Completed', owner: 'Narasimha Rao B.' },
-  { id: 'POS-002', parcelId: 'BH-AP-005302', projectId: 'LA-2026-004', village: 'Ongole', district: 'Prakasam', area: '2.36 acres', awardCompleted: true, compensationCompleted: true, rrCompleted: true, legalApprovals: true, possessionReady: true, possessionDate: '2026-09-01', handoverStatus: 'Completed', owner: 'Satyanarayana K.' },
-  { id: 'POS-003', parcelId: 'BH-AP-004583', projectId: 'LA-2026-001', village: 'Ramapuram', district: 'Guntur', area: '1.92 acres', awardCompleted: true, compensationCompleted: true, rrCompleted: true, legalApprovals: true, possessionReady: true, possessionDate: '2026-10-15', handoverStatus: 'Scheduled', owner: 'Lakshmi Devi P.' },
-  { id: 'POS-004', parcelId: 'BH-AP-004582', projectId: 'LA-2026-001', village: 'Ramapuram', district: 'Guntur', area: '2.84 acres', awardCompleted: true, compensationCompleted: true, rrCompleted: true, legalApprovals: false, possessionReady: false, possessionDate: null, handoverStatus: 'Awaiting Legal Approval', owner: 'Venkata Ramaiah S.' },
-  { id: 'POS-005', parcelId: 'BH-AP-004585', projectId: 'LA-2026-001', village: 'Chebrolu', district: 'Guntur', area: '3.56 acres', awardCompleted: true, compensationCompleted: false, rrCompleted: false, legalApprovals: false, possessionReady: false, possessionDate: null, handoverStatus: 'Compensation Pending', owner: 'Rajesh Kumar M.' },
-  { id: 'POS-006', parcelId: 'BH-AP-005401', projectId: 'LA-2026-006', village: 'Mangalagiri', district: 'Guntur', area: '3.42 acres', awardCompleted: true, compensationCompleted: false, rrCompleted: false, legalApprovals: false, possessionReady: false, possessionDate: null, handoverStatus: 'Pending', owner: 'Venkateswara Rao G.' },
+  { id: 'BD-POS-001', parcelId: 'BD-PARCEL-010', projectId: 'BD-P-004', village: 'Ongole', district: 'Prakasam', area: '1.84 acres', awardCompleted: true, compensationCompleted: true, rrCompleted: true, legalApprovals: true, possessionReady: true, possessionDate: '2026-08-15', handoverStatus: 'Completed', owner: 'Narasimha Rao B.' },
+  { id: 'BD-POS-002', parcelId: 'BD-PARCEL-011', projectId: 'BD-P-004', village: 'Ongole', district: 'Prakasam', area: '2.36 acres', awardCompleted: true, compensationCompleted: true, rrCompleted: true, legalApprovals: true, possessionReady: true, possessionDate: '2026-09-01', handoverStatus: 'Completed', owner: 'Satyanarayana K.' },
+  { id: 'BD-POS-003', parcelId: 'BD-PARCEL-002', projectId: 'BD-P-001', village: 'Ramapuram', district: 'Guntur', area: '1.92 acres', awardCompleted: true, compensationCompleted: true, rrCompleted: true, legalApprovals: true, possessionReady: true, possessionDate: '2026-10-15', handoverStatus: 'Scheduled', owner: 'Lakshmi Devi P.' },
+  { id: 'BD-POS-004', parcelId: 'BD-PARCEL-001', projectId: 'BD-P-001', village: 'Ramapuram', district: 'Guntur', area: '2.84 acres', awardCompleted: true, compensationCompleted: true, rrCompleted: true, legalApprovals: false, possessionReady: false, possessionDate: null, handoverStatus: 'Awaiting Legal Approval', owner: 'Venkata Ramaiah S.' },
+  { id: 'BD-POS-005', parcelId: 'BD-PARCEL-004', projectId: 'BD-P-001', village: 'Chebrolu', district: 'Guntur', area: '3.56 acres', awardCompleted: true, compensationCompleted: false, rrCompleted: false, legalApprovals: false, possessionReady: false, possessionDate: null, handoverStatus: 'Compensation Pending', owner: 'Rajesh Kumar M.' },
+  { id: 'BD-POS-006', parcelId: 'BD-PARCEL-012', projectId: 'BD-P-006', village: 'Mangalagiri', district: 'Guntur', area: '3.42 acres', awardCompleted: true, compensationCompleted: false, rrCompleted: false, legalApprovals: false, possessionReady: false, possessionDate: null, handoverStatus: 'Pending', owner: 'Venkateswara Rao G.' },
 ];
 
 // ── Verification Records ─────────────────────────────────────
 export const verificationRecords = [
   {
-    id: 'VER-001',
-    parcelId: 'BH-AP-004584',
+    id: 'BD-VER-001',
+    parcelId: 'BD-PARCEL-003',
     surveyNo: '143/1',
     village: 'Ramapuram',
     district: 'Guntur',
@@ -430,8 +430,8 @@ export const verificationRecords = [
     remarks: 'Area discrepancy of 0.12 acres between land record and GIS measurement. Boundary alignment shows 96.8% match. Manual survey recommended.',
   },
   {
-    id: 'VER-002',
-    parcelId: 'BH-AP-004586',
+    id: 'BD-VER-002',
+    parcelId: 'BD-PARCEL-005',
     surveyNo: '144/1A',
     village: 'Chebrolu',
     district: 'Guntur',
@@ -470,8 +470,8 @@ export const verificationRecords = [
     remarks: 'Property has an existing mortgage with SBI. Encumbrance must be cleared before acquisition can proceed.',
   },
   {
-    id: 'VER-003',
-    parcelId: 'BH-AP-005101',
+    id: 'BD-VER-003',
+    parcelId: 'BD-PARCEL-006',
     surveyNo: '88/2',
     village: 'Ibrahimpatnam',
     district: 'Krishna',
