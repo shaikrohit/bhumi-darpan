@@ -1,5 +1,5 @@
 import {
-  projects,
+  projects as initialProjects,
   parcels,
   documents,
   notifications,
@@ -8,43 +8,220 @@ import {
   verificationRecords,
   analyticsData,
   dashboardKPIs,
-  acquisitionStatusData,
-  projectProgressData,
-  compensationChartData,
-  timelineChartData,
   districts,
   documentCategories,
   STAGES,
 } from '../data/mockData.js'
 
-// Simulate async API calls with small delay
-const delay = (ms = 50) => new Promise((resolve) => setTimeout(resolve, ms))
+// In-memory mutable projects array for frontend-only state
+let projectsStore = JSON.parse(JSON.stringify(initialProjects))
 
+export function resetProjectsStore() {
+  projectsStore = JSON.parse(JSON.stringify(initialProjects))
+}
+
+// Fast delay helper
+const delay = (ms = 10) => new Promise((resolve) => setTimeout(resolve, ms))
+
+/**
+ * Fetch projects with search, filtering (district, status, stage), and sorting
+ */
 export async function getProjects(filters = {}) {
   await delay()
-  let result = [...projects]
+  let result = [...projectsStore]
+
+  // Filter by District
+  if (filters.district && filters.district !== 'All' && filters.district !== 'All Districts') {
+    const d = filters.district.toLowerCase().replace(' district', '')
+    result = result.filter((p) => p.district.toLowerCase().includes(d))
+  }
+
+  // Filter by Project Status (On Track, At Risk, Delayed, Completed)
   if (filters.status && filters.status !== 'All') {
     result = result.filter((p) => p.status === filters.status)
   }
-  if (filters.district && filters.district !== 'All' && filters.district !== 'All Districts') {
-    result = result.filter((p) => p.district.toLowerCase().includes(filters.district.toLowerCase().replace(' district', '')))
+
+  // Filter by Acquisition Stage (Proposal, Submission, Verification, etc.)
+  if (filters.stage && filters.stage !== 'All') {
+    result = result.filter((p) => p.currentStage === filters.stage)
   }
+
+  // Search by Project ID, Name, District, Authority
   if (filters.search) {
-    const q = filters.search.toLowerCase()
-    result = result.filter((p) => p.name.toLowerCase().includes(q) || p.id.toLowerCase().includes(q))
+    const q = filters.search.trim().toLowerCase()
+    result = result.filter(
+      (p) =>
+        p.id.toLowerCase().includes(q) ||
+        p.name.toLowerCase().includes(q) ||
+        p.district.toLowerCase().includes(q) ||
+        p.authority.toLowerCase().includes(q)
+    )
   }
+
+  // Sorting: name, progress, lastUpdated
+  if (filters.sortBy) {
+    if (filters.sortBy === 'name') {
+      result.sort((a, b) => a.name.localeCompare(b.name))
+    } else if (filters.sortBy === 'progress') {
+      result.sort((a, b) => b.progress - a.progress)
+    } else if (filters.sortBy === 'lastUpdated') {
+      result.sort((a, b) => new Date(b.lastUpdated || '2026-01-01') - new Date(a.lastUpdated || '2026-01-01'))
+    }
+  }
+
   return { data: result, total: result.length }
 }
 
+/**
+ * Fetch single project by ID
+ */
 export async function getProjectById(id) {
   await delay()
-  const project = projects.find((p) => p.id === id)
-  if (!project) throw new Error('Project not found')
+  const project = projectsStore.find((p) => p.id === id)
+  if (!project) throw new Error(`Project not found: ${id}`)
   const projectParcels = parcels.filter((p) => p.projectId === id)
   const projectDocs = documents.filter((d) => d.projectId === id)
-  return { ...project, parcels: projectParcels, documents: projectDocs }
+  return {
+    ...project,
+    parcels: projectParcels,
+    documents: projectDocs,
+    milestones: project.milestones || [],
+    stageHistory: project.stageHistory || [],
+  }
 }
 
+/**
+ * Create new synthetic project (Frontend state)
+ */
+export async function createProject(projectData) {
+  await delay()
+  if (!projectData.name || !projectData.authority || !projectData.district || !projectData.landRequired) {
+    throw new Error('Missing required project fields')
+  }
+
+  const nextNum = projectsStore.length + 1
+  const newId = `BD-P-${String(nextNum).padStart(3, '0')}`
+  const today = new Date().toISOString().split('T')[0]
+
+  const defaultStageHistory = STAGES.map((stage, i) => ({
+    stage,
+    date: i === 0 ? today : null,
+    status: i === 0 ? 'completed' : i === 1 ? 'in-progress' : 'pending',
+  }))
+
+  const defaultMilestones = [
+    { id: `${newId}-MS1`, name: 'Project Proposal Sanction', date: today, status: 'Completed', note: 'Created in platform' },
+    { id: `${newId}-MS2`, name: 'Online Gazette Submission', date: projectData.expectedCompletion || '2026-06-30', status: 'In Progress', note: 'Scrutiny ongoing' },
+    { id: `${newId}-MS3`, name: 'Joint Cadastral Survey', date: null, status: 'Pending', note: 'Upcoming' },
+    { id: `${newId}-MS4`, name: 'Section 11 Preliminary Notice', date: null, status: 'Pending', note: 'Upcoming' },
+    { id: `${newId}-MS5`, name: 'Section 19 Award Declaration', date: null, status: 'Pending', note: 'Upcoming' },
+  ]
+
+  const newProject = {
+    id: newId,
+    name: projectData.name,
+    authority: projectData.authority,
+    projectType: projectData.projectType || 'Infrastructure',
+    state: projectData.state || 'Andhra Pradesh',
+    district: projectData.district,
+    tehsil: projectData.tehsil || `${projectData.district} Mandal`,
+    village: projectData.village || `${projectData.district} Central`,
+    landRequired: projectData.landRequired.includes('acre') ? projectData.landRequired : `${projectData.landRequired} acres`,
+    affectedParcels: parseInt(projectData.parcels || '15', 10),
+    parcels: parseInt(projectData.parcels || '15', 10),
+    currentStage: 'Submission',
+    currentStageIndex: 1,
+    progress: 15,
+    compensation: '₹12.5 Cr (Est)',
+    compensationDisbursed: '₹0',
+    rrTotal: 10,
+    rrCompleted: 0,
+    status: 'On Track',
+    startDate: today,
+    expectedCompletion: projectData.expectedCompletion || '2027-12-31',
+    expectedEnd: projectData.expectedCompletion || '2027-12-31',
+    lastUpdated: today,
+    description: projectData.description || 'Land acquisition project initiated via online portal.',
+    stageHistory: defaultStageHistory,
+    milestones: defaultMilestones,
+  }
+
+  projectsStore = [newProject, ...projectsStore]
+  return newProject
+}
+
+/**
+ * Edit existing project attributes
+ */
+export async function updateProject(id, changes) {
+  await delay()
+  const index = projectsStore.findIndex((p) => p.id === id)
+  if (index === -1) throw new Error(`Project ${id} not found`)
+
+  const today = new Date().toISOString().split('T')[0]
+  const updated = {
+    ...projectsStore[index],
+    ...changes,
+    lastUpdated: today,
+  }
+  projectsStore[index] = updated
+  return updated
+}
+
+/**
+ * Update Project Status (On Track, At Risk, Delayed, Completed)
+ */
+export async function updateProjectStatus(id, newStatus) {
+  await delay()
+  const index = projectsStore.findIndex((p) => p.id === id)
+  if (index === -1) throw new Error(`Project ${id} not found`)
+
+  const today = new Date().toISOString().split('T')[0]
+  projectsStore[index] = {
+    ...projectsStore[index],
+    status: newStatus,
+    lastUpdated: today,
+  }
+  return projectsStore[index]
+}
+
+/**
+ * Update Milestone status (Completed, In Progress, Pending, Blocked)
+ */
+export async function updateProjectMilestone(projectId, milestoneId, changes) {
+  await delay()
+  const projectIndex = projectsStore.findIndex((p) => p.id === projectId)
+  if (projectIndex === -1) throw new Error(`Project ${projectId} not found`)
+
+  const proj = projectsStore[projectIndex]
+  const msIndex = (proj.milestones || []).findIndex((m) => m.id === milestoneId)
+  if (msIndex === -1) throw new Error(`Milestone ${milestoneId} not found`)
+
+  const today = new Date().toISOString().split('T')[0]
+  const updatedMilestone = {
+    ...proj.milestones[msIndex],
+    ...changes,
+    date: changes.status === 'Completed' ? (changes.date || today) : proj.milestones[msIndex].date,
+  }
+
+  const updatedMilestones = [...proj.milestones]
+  updatedMilestones[msIndex] = updatedMilestone
+
+  const completedCount = updatedMilestones.filter((m) => m.status === 'Completed').length
+  const newProgress = Math.min(100, Math.round((completedCount / updatedMilestones.length) * 100))
+
+  const updatedProject = {
+    ...proj,
+    milestones: updatedMilestones,
+    progress: newProgress,
+    lastUpdated: today,
+  }
+
+  projectsStore[projectIndex] = updatedProject
+  return updatedProject
+}
+
+// ── Other Service Utilities (Kept intact) ───────────────────
 export async function getLandParcels(filters = {}) {
   await delay()
   let result = [...parcels]
@@ -125,16 +302,14 @@ export async function getAnalyticsData() {
   return analyticsData
 }
 
-// Global search across projects, parcels, documents, and notifications
 export async function searchGlobal(query) {
-  await delay(20)
+  await delay(10)
   if (!query || !query.trim()) return []
 
   const q = query.trim().toLowerCase()
   const results = []
 
-  // Search projects
-  projects.forEach((p) => {
+  projectsStore.forEach((p) => {
     if (p.id?.toLowerCase().includes(q) || p.name?.toLowerCase().includes(q) || p.district?.toLowerCase().includes(q)) {
       results.push({
         id: p.id,
@@ -146,7 +321,6 @@ export async function searchGlobal(query) {
     }
   })
 
-  // Search land parcels
   parcels.forEach((p) => {
     if (
       p.id?.toLowerCase().includes(q) ||
@@ -164,7 +338,6 @@ export async function searchGlobal(query) {
     }
   })
 
-  // Search documents
   documents.forEach((d) => {
     if (d.id?.toLowerCase().includes(q) || d.name?.toLowerCase().includes(q) || d.category?.toLowerCase().includes(q)) {
       results.push({
@@ -180,9 +353,6 @@ export async function searchGlobal(query) {
   return results.slice(0, 8)
 }
 
-/**
- * Filterable Dashboard Data Service
- */
 export async function getDashboardData(filters = {}) {
   await delay()
 
@@ -191,8 +361,7 @@ export async function getDashboardData(filters = {}) {
     : null
   const cleanStatus = (filters.status && filters.status !== 'All') ? filters.status : null
 
-  // Filter projects
-  let filteredProjects = [...projects]
+  let filteredProjects = [...projectsStore]
   if (cleanDistrict) {
     filteredProjects = filteredProjects.filter((p) => p.district.toLowerCase().includes(cleanDistrict))
   }
@@ -200,13 +369,11 @@ export async function getDashboardData(filters = {}) {
     filteredProjects = filteredProjects.filter((p) => p.status === cleanStatus)
   }
 
-  // Filter parcels
   let filteredParcels = [...parcels]
   if (cleanDistrict) {
     filteredParcels = filteredParcels.filter((p) => p.district.toLowerCase().includes(cleanDistrict))
   }
 
-  // Calculate dynamic KPIs
   const activeCount = filteredProjects.filter((p) => p.status !== 'Completed').length
   const totalParcelsCount = filteredParcels.length
   const pendingVerifCount = filteredParcels.filter(
@@ -214,7 +381,6 @@ export async function getDashboardData(filters = {}) {
   ).length
   const possessionDoneCount = filteredParcels.filter((p) => p.status === 'Acquired').length
 
-  // Calculate dynamic 9-stage lifecycle monitoring counts
   const stageCounts = STAGES.map((stage) => {
     let count = 0
     filteredProjects.forEach((p) => {
@@ -233,43 +399,13 @@ export async function getDashboardData(filters = {}) {
     return { stage, count }
   })
 
-  // Alerts list
   const alerts = [
-    {
-      id: 'BD-ALT-001',
-      severity: 'critical',
-      title: 'Compensation Verification Pending',
-      caseId: 'BD-LA-018',
-      explanation: 'Case BD-LA-018 has pending compensation verification exceeding 12 days.',
-      timestamp: '12 days pending',
-    },
-    {
-      id: 'BD-ALT-002',
-      severity: 'warning',
-      title: 'R&R Milestone Approaching',
-      caseId: 'BD-P-004',
-      explanation: 'Rehabilitation entitlement distribution due in 5 days for East Coast Railway project.',
-      timestamp: 'Due in 5 days',
-    },
-    {
-      id: 'BD-ALT-003',
-      severity: 'warning',
-      title: 'District Approval Pending',
-      caseId: 'BD-LA-027',
-      explanation: 'Section 19 declaration awaiting DLAO signature approval.',
-      timestamp: 'Awaiting signature',
-    },
-    {
-      id: 'BD-ALT-004',
-      severity: 'info',
-      title: 'New Section 11 Submission',
-      caseId: 'BD-LA-041',
-      explanation: 'Nagarjuna Sagar Canal Modernization Phase 2 submitted online.',
-      timestamp: 'Just now',
-    },
+    { id: 'BD-ALT-001', severity: 'critical', title: 'Compensation Verification Pending', caseId: 'BD-LA-018', explanation: 'Case BD-LA-018 has pending compensation verification exceeding 12 days.', timestamp: '12 days pending' },
+    { id: 'BD-ALT-002', severity: 'warning', title: 'R&R Milestone Approaching', caseId: 'BD-P-004', explanation: 'Rehabilitation entitlement distribution due in 5 days for East Coast Railway project.', timestamp: 'Due in 5 days' },
+    { id: 'BD-ALT-003', severity: 'warning', title: 'District Approval Pending', caseId: 'BD-LA-027', explanation: 'Section 19 declaration awaiting DLAO signature approval.', timestamp: 'Awaiting signature' },
+    { id: 'BD-ALT-004', severity: 'info', title: 'New Section 11 Submission', caseId: 'BD-LA-041', explanation: 'Nagarjuna Sagar Canal Modernization Phase 2 submitted online.', timestamp: 'Just now' },
   ]
 
-  // Recent activity timeline
   const recentActivity = [
     { id: 'ACT-001', type: 'verification', title: 'Land parcel verified', target: 'BD-PARCEL-018', time: '10 minutes ago', status: 'Verified' },
     { id: 'ACT-002', type: 'award', title: 'Award declared under Sec 23', target: 'BD-LA-031', time: '32 minutes ago', status: 'Award Completed' },
@@ -302,7 +438,6 @@ export async function getDashboardData(filters = {}) {
     },
     alerts,
     recentActivity,
-    // Backwards compatibility aliases
     acquisitionStatus: stageCounts,
     projectProgress: filteredProjects.slice(0, 6),
   }
