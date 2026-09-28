@@ -1,216 +1,162 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { useParams, useNavigate, useOutletContext } from 'react-router-dom'
-import { ArrowLeft, Edit3, ShieldCheck, Building2, MapPin, Calendar, Layers, FileText } from 'lucide-react'
-import { PageHeader, Card, StatCard, StatusBadge, Button } from '../components/common'
-import { LoadingState, ErrorState } from '../components/ui'
-import {
-  LifecycleTimeline,
-  MilestoneTracker,
-  ProjectFormModal,
-  ProjectStatusModal,
-  MilestoneUpdateModal,
-} from '../components/projects'
-import {
-  getProjectById,
-  updateProject,
-  updateProjectStatus,
-  updateProjectMilestone,
-} from '../services/mockService'
+import React, { useState, useEffect } from 'react'
+import { useParams, Link } from 'react-router-dom'
+import { ArrowLeft, MapPin, Calendar, Building2, FileText, CheckCircle2, Clock, Circle } from 'lucide-react'
+import { PageHeader, Card, StatusBadge, Button } from '../components/common'
+import { LoadingState, ErrorState, DataTable } from '../components/ui'
+import { getProjectById } from '../services/mockService'
+import { STAGES } from '../data/mockData'
 
 export default function ProjectDetails() {
   const params = useParams()
-  const navigate = useNavigate()
-  const { addToast } = useOutletContext() || {}
   const targetId = params.projectId || params.id
-
   const [project, setProject] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // Modals
-  const [editModalOpen, setEditModalOpen] = useState(false)
-  const [statusModalOpen, setStatusModalOpen] = useState(false)
-  const [msModalOpen, setMsModalOpen] = useState(false)
-  const [selectedMilestone, setSelectedMilestone] = useState(null)
-
-  const loadProject = useCallback(() => {
+  useEffect(() => {
+    let isMounted = true
     setLoading(true)
     setError(null)
     getProjectById(targetId)
       .then((res) => {
-        setProject(res)
-        setLoading(false)
+        if (isMounted) {
+          setProject(res)
+          setLoading(false)
+        }
       })
       .catch((err) => {
-        setError(err.message || 'Project not found')
-        setLoading(false)
+        if (isMounted) {
+          setError(err.message || 'Project not found')
+          setLoading(false)
+        }
       })
+    return () => { isMounted = false }
   }, [targetId])
 
-  useEffect(() => {
-    loadProject()
-  }, [loadProject])
-
-  const handleEditSubmit = async (formData) => {
-    const updated = await updateProject(project.id, formData)
-    if (addToast) addToast(`Project ${updated.id} details updated successfully.`, 'success')
-    loadProject()
-  }
-
-  const handleStatusConfirm = async (newStatus) => {
-    const updated = await updateProjectStatus(project.id, newStatus)
-    if (addToast) addToast(`Project ${updated.id} status changed to "${newStatus}".`, 'success')
-    loadProject()
-  }
-
-  const handleMilestoneConfirm = async (milestoneId, changes) => {
-    const updated = await updateProjectMilestone(project.id, milestoneId, changes)
-    if (addToast) addToast(`Milestone status updated.`, 'success')
-    loadProject()
-  }
-
-  if (loading) return <LoadingState message="Loading land acquisition project details..." />
+  if (loading) return <LoadingState message="Loading project details..." />
   if (error || !project) {
     return (
       <ErrorState
         title="Project Not Found"
-        message={`The project ID "${targetId}" could not be found or loaded.`}
-        onRetry={loadProject}
+        message={`The requested project ID "${targetId}" could not be loaded.`}
       />
     )
   }
 
+  const currentStageIndex = STAGES.indexOf(project.currentStage)
+
+  const parcelColumns = [
+    { key: 'id', label: 'PARCEL ID', render: (p) => <span className="font-semibold text-blue-600">{p.id}</span> },
+    { key: 'ulpin', label: 'ULPIN' },
+    { key: 'surveyNumber', label: 'SURVEY NO.' },
+    { key: 'owner', label: 'OWNER' },
+    { key: 'area', label: 'AREA' },
+    { key: 'verification', label: 'VERIFICATION', render: (p) => <StatusBadge status={p.verification || 'Pending'} dot /> },
+    { key: 'status', label: 'ACQUISITION STATUS', render: (p) => <StatusBadge status={p.status} /> },
+  ]
+
   return (
-    <div className="space-y-6 animate-fade-in pb-8">
+    <div className="space-y-6 animate-fade-in">
       <PageHeader
         title={project.name}
-        subtitle={`Project ID: ${project.id} • ${project.district} District • ${project.authority}`}
+        subtitle={`Project ID: ${project.id} • ${project.district} District`}
         breadcrumbs={[
           { label: 'Dashboard', href: '/dashboard' },
           { label: 'Projects', href: '/projects' },
           { label: project.id },
         ]}
         actions={
-          <div className="flex flex-wrap items-center gap-2">
-            <Button variant="secondary" size="sm" icon={ArrowLeft} onClick={() => navigate('/projects')}>
-              Back to Projects
-            </Button>
-            <Button variant="secondary" size="sm" icon={Edit3} onClick={() => setEditModalOpen(true)}>
-              Edit Project
-            </Button>
-            <Button size="sm" icon={ShieldCheck} onClick={() => setStatusModalOpen(true)}>
-              Update Status
-            </Button>
+          <div className="flex items-center gap-2">
+            <StatusBadge status={project.status} dot />
+            <Button variant="secondary" size="sm">Download Report</Button>
           </div>
         }
       />
 
-      {/* Top 4 Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="LAND REQUIRED" value={project.landRequired} subtitle="Total land area" icon={Building2} iconColor="text-blue-600" />
-        <StatCard title="AFFECTED PARCELS" value={`${project.parcels?.length || project.affectedParcels || 0} parcels`} subtitle="Mapped in cadastral GIS" icon={MapPin} iconColor="text-indigo-600" />
-        <StatCard title="CURRENT STAGE" value={project.currentStage} subtitle={`Stage ${project.currentStageIndex + 1} of 9`} icon={Layers} iconColor="text-amber-600" />
-        <StatCard title="OVERALL PROGRESS" value={`${project.progress}%`} subtitle="Acquisition lifecycle completed" trend="up" trendValue={`${project.progress}%`} icon={Calendar} iconColor="text-emerald-600" />
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Detailed Information & Milestones */}
+        {/* Left Column: Project Overview & Parcels */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Project Overview Card */}
-          <Card
-            title="Project Information Overview"
-            subtitle="Executive summary and administrative details"
-            action={<StatusBadge status={project.status} dot />}
-          >
-            <div className="space-y-4">
-              <p className="text-xs text-gray-600 leading-relaxed bg-gray-50/60 p-3.5 rounded-xl border border-gray-100">
-                {project.description || 'Infrastructure land acquisition project under execution.'}
-              </p>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 p-4 rounded-xl bg-gray-50 border border-gray-200 text-xs">
-                <div>
-                  <span className="text-gray-500 font-medium">Project ID</span>
-                  <p className="font-bold text-blue-600 font-mono mt-0.5">{project.id}</p>
-                </div>
-                <div>
-                  <span className="text-gray-500 font-medium">Executing Authority</span>
-                  <p className="font-bold text-gray-900 mt-0.5">{project.authority}</p>
-                </div>
-                <div>
-                  <span className="text-gray-500 font-medium">Project Type</span>
-                  <p className="font-bold text-gray-900 mt-0.5">{project.projectType || 'Infrastructure'}</p>
-                </div>
-                <div>
-                  <span className="text-gray-500 font-medium">State</span>
-                  <p className="font-bold text-gray-900 mt-0.5">{project.state || 'Andhra Pradesh'}</p>
-                </div>
-                <div>
-                  <span className="text-gray-500 font-medium">District</span>
-                  <p className="font-bold text-gray-900 mt-0.5">{project.district}</p>
-                </div>
-                <div>
-                  <span className="text-gray-500 font-medium">Tehsil / Mandal</span>
-                  <p className="font-bold text-gray-900 mt-0.5">{project.tehsil || 'Central Mandal'}</p>
-                </div>
-                <div>
-                  <span className="text-gray-500 font-medium">Primary Village / Area</span>
-                  <p className="font-bold text-gray-900 mt-0.5">{project.village}</p>
-                </div>
-                <div>
-                  <span className="text-gray-500 font-medium">Project Start Date</span>
-                  <p className="font-bold text-gray-900 mt-0.5">{project.startDate}</p>
-                </div>
-                <div>
-                  <span className="text-gray-500 font-medium">Target Completion</span>
-                  <p className="font-bold text-gray-900 mt-0.5">{project.expectedCompletion || project.expectedEnd}</p>
-                </div>
+          <Card title="Project Overview" icon={Building2}>
+            <p className="text-sm text-gray-600 leading-relaxed mb-4">
+              {project.description || 'Infrastructure land acquisition project.'}
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100">
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Executing Authority</p>
+                <p className="text-sm font-semibold text-gray-900 mt-0.5">{project.authority}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Total Land Required</p>
+                <p className="text-sm font-semibold text-gray-900 mt-0.5">{project.totalLand}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Affected Parcels</p>
+                <p className="text-sm font-semibold text-gray-900 mt-0.5">{project.parcels} parcels</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Start Date</p>
+                <p className="text-sm font-semibold text-gray-900 mt-0.5">{project.startDate}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Target Completion</p>
+                <p className="text-sm font-semibold text-gray-900 mt-0.5">{project.expectedCompletion || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Compensation Assessed</p>
+                <p className="text-sm font-semibold text-gray-900 mt-0.5">{project.compensation}</p>
               </div>
             </div>
           </Card>
 
-          {/* Key Milestones Tracker */}
-          <MilestoneTracker
-            milestones={project.milestones || []}
-            onUpdateMilestone={(ms) => {
-              setSelectedMilestone(ms)
-              setMsModalOpen(true)
-            }}
-          />
+          {/* Affected Parcels List */}
+          <Card title="Affected Land Parcels" subtitle={`Total ${project.parcels?.length || 0} parcels mapped`} padding="none">
+            <DataTable
+              columns={parcelColumns}
+              data={project.parcels || []}
+              emptyMessage="No land parcels mapped to this project yet."
+            />
+          </Card>
         </div>
 
-        {/* Right Column: 9-Stage Acquisition Lifecycle Timeline */}
-        <div>
-          <LifecycleTimeline
-            currentStage={project.currentStage}
-            stageHistory={project.stageHistory || []}
-          />
+        {/* Right Column: 9-Stage Lifecycle Timeline */}
+        <div className="space-y-6">
+          <Card title="Acquisition Lifecycle Timeline" subtitle="9-stage digital workflow progression">
+            <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-200">
+              {STAGES.map((stage, idx) => {
+                const isCompleted = idx < currentStageIndex
+                const isCurrent = idx === currentStageIndex
+                const isUpcoming = idx > currentStageIndex
+
+                return (
+                  <div key={stage} className="relative flex items-start gap-3">
+                    <span
+                      className={`absolute -left-6 top-0.5 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold ring-4 ring-white ${
+                        isCompleted
+                          ? 'bg-emerald-600 text-white'
+                          : isCurrent
+                          ? 'bg-blue-600 text-white ring-blue-100 animate-pulse'
+                          : 'bg-gray-200 text-gray-500'
+                      }`}
+                    >
+                      {isCompleted ? <CheckCircle2 className="w-3.5 h-3.5" /> : idx + 1}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className={`text-xs font-bold ${isCurrent ? 'text-blue-700 font-extrabold' : isCompleted ? 'text-gray-900' : 'text-gray-400'}`}>
+                        {stage}
+                      </p>
+                      {isCurrent && (
+                        <span className="inline-block mt-0.5 text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
+                          Current Active Stage
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </Card>
         </div>
       </div>
-
-      {/* Edit Modal */}
-      <ProjectFormModal
-        isOpen={editModalOpen}
-        onClose={() => setEditModalOpen(false)}
-        onSubmit={handleEditSubmit}
-        initialData={project}
-        isEditing={true}
-      />
-
-      {/* Status Modal */}
-      <ProjectStatusModal
-        isOpen={statusModalOpen}
-        onClose={() => setStatusModalOpen(false)}
-        onConfirm={handleStatusConfirm}
-        project={project}
-      />
-
-      {/* Milestone Update Modal */}
-      <MilestoneUpdateModal
-        isOpen={msModalOpen}
-        onClose={() => setMsModalOpen(false)}
-        onConfirm={handleMilestoneConfirm}
-        milestone={selectedMilestone}
-      />
     </div>
   )
 }
