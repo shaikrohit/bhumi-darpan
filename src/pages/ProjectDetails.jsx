@@ -46,14 +46,42 @@ export default function ProjectDetails() {
   const currentStageIndex = STAGES.indexOf(project.currentStage)
 
   const parcelColumns = [
-    { key: 'id', label: 'PARCEL ID', render: (p) => <span className="font-semibold text-blue-600">{p.id}</span> },
-    { key: 'ulpin', label: 'ULPIN' },
-    { key: 'surveyNumber', label: 'SURVEY NO.' },
-    { key: 'owner', label: 'OWNER' },
+    {
+      key: 'id',
+      label: 'PARCEL ID',
+      render: (p) => (
+        <Link
+          to={`/land-parcels?projectId=${project.id}&parcelId=${p.id}`}
+          className="font-bold text-blue-700 hover:underline font-mono"
+        >
+          {p.id}
+        </Link>
+      ),
+    },
+    { key: 'ulpin', label: 'ULPIN', render: (p) => <span className="font-mono text-xs">{p.ulpin}</span> },
+    { key: 'surveyNumber', label: 'SURVEY NO.', render: (p) => p.surveyNumber || p.surveyNo },
+    { key: 'owner', label: 'OWNER REF', render: (p) => p.ownerRef || p.owner },
     { key: 'area', label: 'AREA' },
-    { key: 'verification', label: 'VERIFICATION', render: (p) => <StatusBadge status={p.verification || 'Pending'} dot /> },
-    { key: 'status', label: 'ACQUISITION STATUS', render: (p) => <StatusBadge status={p.status} /> },
+    { key: 'verification', label: 'VERIFICATION', render: (p) => <StatusBadge status={p.verification || p.verificationStatus || 'Pending'} dot /> },
+    { key: 'status', label: 'ACQUISITION STATUS', render: (p) => <StatusBadge status={p.status || p.acquisitionStatus} /> },
+    {
+      key: 'action',
+      label: 'ACTION',
+      render: (p) => (
+        <Link
+          to={`/land-parcels?projectId=${project.id}&parcelId=${p.id}`}
+          className="text-xs font-semibold text-blue-600 hover:text-blue-800"
+        >
+          View GIS
+        </Link>
+      ),
+    },
   ]
+
+  const projectParcels = project.parcels || []
+  const verifiedCount = projectParcels.filter((p) => (p.verification || p.verificationStatus) === 'Verified').length
+  const pendingCount = projectParcels.filter((p) => (p.verification || p.verificationStatus) === 'Pending').length
+  const reviewCount = projectParcels.filter((p) => (p.verification || p.verificationStatus) === 'Needs Review').length
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -91,7 +119,9 @@ export default function ProjectDetails() {
               </div>
               <div>
                 <p className="text-xs text-gray-500 font-medium">Affected Parcels</p>
-                <p className="text-sm font-semibold text-gray-900 mt-0.5">{project.parcels} parcels</p>
+                <p className="text-sm font-semibold text-gray-900 mt-0.5">
+                  {Array.isArray(project.parcels) ? project.parcels.length : project.parcels} parcels
+                </p>
               </div>
               <div>
                 <p className="text-xs text-gray-500 font-medium">Start Date</p>
@@ -109,10 +139,36 @@ export default function ProjectDetails() {
           </Card>
 
           {/* Affected Parcels List */}
-          <Card title="Affected Land Parcels" subtitle={`Total ${project.parcels?.length || 0} parcels mapped`} padding="none">
+          <Card
+            title="Affected Land Parcels"
+            subtitle={`Total ${projectParcels.length} parcels mapped`}
+            action={
+              <Link to={`/land-parcels?projectId=${project.id}`}>
+                <Button variant="secondary" size="sm" icon={MapPin}>
+                  View Parcels in GIS Workspace
+                </Button>
+              </Link>
+            }
+            padding="none"
+          >
+            <div className="p-4 bg-gray-50/70 border-b border-gray-200 grid grid-cols-3 gap-2 text-center text-xs">
+              <div className="bg-white p-2 rounded-lg border border-gray-200">
+                <span className="text-gray-500 block text-[10px]">Verified</span>
+                <span className="font-bold text-emerald-600 text-sm">{verifiedCount}</span>
+              </div>
+              <div className="bg-white p-2 rounded-lg border border-gray-200">
+                <span className="text-gray-500 block text-[10px]">Pending Verification</span>
+                <span className="font-bold text-amber-600 text-sm">{pendingCount}</span>
+              </div>
+              <div className="bg-white p-2 rounded-lg border border-gray-200">
+                <span className="text-gray-500 block text-[10px]">Needs Review</span>
+                <span className="font-bold text-red-600 text-sm">{reviewCount}</span>
+              </div>
+            </div>
+
             <DataTable
               columns={parcelColumns}
-              data={project.parcels || []}
+              data={projectParcels}
               emptyMessage="No land parcels mapped to this project yet."
             />
           </Card>
