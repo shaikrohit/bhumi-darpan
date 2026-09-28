@@ -11,14 +11,20 @@ import {
   X,
   Building2,
   FileText,
-  CheckCircle2
+  CheckCircle2,
+  FolderKanban,
+  Map,
+  ArrowRight
 } from 'lucide-react'
 import { notifications as allNotifications, districts } from '../../data/mockData.js'
+import { searchGlobal } from '../../services/mockService.js'
 
 export default function TopNavbar({ onMenuToggle, addToast }) {
   const navigate = useNavigate()
   const [selectedDistrict, setSelectedDistrict] = useState('Guntur District')
   const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState([])
+  const [searchOpen, setSearchOpen] = useState(false)
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
 
   // Dropdown states
@@ -37,15 +43,36 @@ export default function TopNavbar({ onMenuToggle, addToast }) {
   })
 
   // Refs for click outside
+  const searchRef = useRef(null)
   const notifRef = useRef(null)
   const profileRef = useRef(null)
   const districtRef = useRef(null)
 
   const unreadCount = allNotifications.filter((n) => !n.read).length
 
+  // Live global search effect
+  useEffect(() => {
+    let isMounted = true
+    if (searchQuery.trim().length > 1) {
+      searchGlobal(searchQuery).then((res) => {
+        if (isMounted) {
+          setSearchResults(res)
+          setSearchOpen(true)
+        }
+      })
+    } else {
+      setSearchResults([])
+      setSearchOpen(false)
+    }
+    return () => { isMounted = false }
+  }, [searchQuery])
+
   // Handle outside clicks
   useEffect(() => {
     function handleClickOutside(event) {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setSearchOpen(false)
+      }
       if (notifRef.current && !notifRef.current.contains(event.target)) {
         setNotifOpen(false)
       }
@@ -60,23 +87,32 @@ export default function TopNavbar({ onMenuToggle, addToast }) {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Handle Escape key for modal
+  // Handle Escape key for modal & search
   useEffect(() => {
     function handleKeyDown(e) {
-      if (e.key === 'Escape' && modalOpen) {
-        setModalOpen(false)
+      if (e.key === 'Escape') {
+        if (modalOpen) setModalOpen(false)
+        if (searchOpen) setSearchOpen(false)
       }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [modalOpen])
+  }, [modalOpen, searchOpen])
 
   const handleSearchSubmit = (e) => {
     e.preventDefault()
     if (searchQuery.trim()) {
       navigate(`/projects?search=${encodeURIComponent(searchQuery.trim())}`)
+      setSearchOpen(false)
       setMobileSearchOpen(false)
     }
+  }
+
+  const handleResultClick = (link) => {
+    setSearchOpen(false)
+    setMobileSearchOpen(false)
+    setSearchQuery('')
+    navigate(link)
   }
 
   const handleCreateCase = (e) => {
@@ -99,7 +135,7 @@ export default function TopNavbar({ onMenuToggle, addToast }) {
 
   return (
     <header className="sticky top-0 z-20 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white px-4 md:px-6 shadow-2xs">
-      {/* Left side: Hamburger & Brand Title / Search */}
+      {/* Left side: Hamburger & Global Search */}
       <div className="flex items-center gap-3 flex-1 max-w-xl">
         <button
           type="button"
@@ -111,20 +147,59 @@ export default function TopNavbar({ onMenuToggle, addToast }) {
         </button>
 
         {/* Global Search Bar (Desktop) */}
-        <form onSubmit={handleSearchSubmit} className="hidden sm:flex flex-1 items-center relative">
-          <label htmlFor="global-search" className="sr-only">
-            Search projects, land parcels, cases
-          </label>
-          <Search className="absolute left-3 h-4 w-4 text-gray-400 pointer-events-none" aria-hidden="true" />
-          <input
-            id="global-search"
-            type="search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search projects, parcels, survey numbers..."
-            className="w-full rounded-lg border border-gray-300 bg-gray-50 py-1.5 pl-9 pr-4 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors"
-          />
-        </form>
+        <div className="relative hidden sm:flex flex-1 items-center" ref={searchRef}>
+          <form onSubmit={handleSearchSubmit} className="w-full relative flex items-center">
+            <label htmlFor="global-search" className="sr-only">
+              Search projects, land parcels, survey numbers, cases
+            </label>
+            <Search className="absolute left-3 h-4 w-4 text-gray-400 pointer-events-none" aria-hidden="true" />
+            <input
+              id="global-search"
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => { if (searchResults.length > 0) setSearchOpen(true) }}
+              placeholder="Search projects (BD-P-001), parcels (BD-PARCEL-001)..."
+              className="w-full rounded-lg border border-gray-300 bg-gray-50 py-1.5 pl-9 pr-4 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors"
+            />
+          </form>
+
+          {/* Search Live Results Overlay */}
+          {searchOpen && searchResults.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-2 rounded-xl border border-gray-200 bg-white shadow-xl z-50 overflow-hidden animate-scale-in">
+              <div className="px-3 py-1.5 border-b bg-gray-50 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                Matching System Records
+              </div>
+              <div className="max-h-80 overflow-y-auto divide-y divide-gray-100">
+                {searchResults.map((res) => (
+                  <button
+                    key={res.id + res.link}
+                    type="button"
+                    onClick={() => handleResultClick(res.link)}
+                    className="w-full p-3 text-left hover:bg-blue-50/50 flex items-start gap-3 transition-colors cursor-pointer group"
+                  >
+                    <div className="p-2 rounded-lg bg-gray-100 group-hover:bg-blue-100 text-gray-600 group-hover:text-blue-600 shrink-0">
+                      {res.category === 'Project' ? (
+                        <FolderKanban className="w-4 h-4" />
+                      ) : res.category === 'Land Parcel' ? (
+                        <Map className="w-4 h-4" />
+                      ) : (
+                        <FileText className="w-4 h-4" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-gray-900 group-hover:text-blue-600 truncate">{res.title}</span>
+                        <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded-xs shrink-0">{res.category}</span>
+                      </div>
+                      <p className="text-[11px] text-gray-500 truncate mt-0.5">{res.subtitle}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Right side: Actions & User menu */}
